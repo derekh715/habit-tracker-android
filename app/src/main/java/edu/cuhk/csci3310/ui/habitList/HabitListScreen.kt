@@ -17,12 +17,15 @@ fun HabitListScreen(viewModel: HabitListViewModel = hiltViewModel()) {
     return Scaffold {
             paddingValues ->
         Column(
-            modifier = Modifier.padding(paddingValues).fillMaxSize(),
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Button(onClick = {
-                viewModel.insertTodoTest()
+                viewModel.onEvent(HabitListEvent.AddDummyHabit)
             }) {
                 Text("Add one test item")
             }

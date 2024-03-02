@@ -2,6 +2,7 @@ package edu.cuhk.csci3310.data
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Query
 import androidx.room.Upsert
 
 @Dao
@@ -12,8 +13,8 @@ interface HabitDao {
     @Delete
     suspend fun deleteHabit(habit: Habit)
 
-//    @Query("")
-//    suspend fun getHabits(): List<Habit>
+    @Query("SELECT * FROM habit")
+    suspend fun getHabits(): List<Habit>
 
 //    @Query("SELECT * FROM record WHERE habitId = :habitId")
 //    suspend fun getRecordsOfHabit(habitId: Long): List<Record>

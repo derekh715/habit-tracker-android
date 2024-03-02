@@ -3,6 +3,7 @@ package edu.cuhk.csci3310.data
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity
 data class Habit(
@@ -11,8 +12,8 @@ data class Habit(
     // if the habit is positive (wants to achieve)
     // or negative (wants to avoid)
     val positive: Boolean,
-    // when does the habit end
-    val until: Long,
+    // when does the habit end?
+    val until: Date,
     val title: String,
     val description: String?,
     @Embedded

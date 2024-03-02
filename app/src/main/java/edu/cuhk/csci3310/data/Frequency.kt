@@ -1,8 +1,15 @@
 package edu.cuhk.csci3310.data
 
+enum class FrequencyUnit {
+    DAILY,
+    WEEKLY,
+    MONTHLY,
+    YEARLY,
+}
+
 data class Frequency(
-    // TODO
-    val unit: String,
+    // e.g. three times per month, four times per week
+    val unit: FrequencyUnit,
     // check higher than zero times
-    val times: Int
+    val times: Int,
 )
