@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 data class BottomNavBarItemData(
     val name: String,
-    val screen: Screen,
+    val route: String,
     val unselectedIcon: ImageVector,
     val selectedIcon: ImageVector,
     val badgeValue: Int? = null,

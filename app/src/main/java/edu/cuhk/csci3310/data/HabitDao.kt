@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HabitDao {
@@ -14,7 +15,7 @@ interface HabitDao {
     suspend fun deleteHabit(habit: Habit)
 
     @Query("SELECT * FROM habit")
-    suspend fun getHabits(): List<Habit>
+    fun getHabitsOnly(): Flow<List<Habit>>
 
 //    @Query("SELECT * FROM record WHERE habitId = :habitId")
 //    suspend fun getRecordsOfHabit(habitId: Long): List<Record>

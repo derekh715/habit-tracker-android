@@ -15,52 +15,57 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun BottomNavBar(navController: NavController) {
     val navigationList =
         listOf(
             BottomNavBarItemData(
-                screen = Screen.Home,
+                route = Graph.HabitList.name,
                 name = "Home",
                 selectedIcon = Icons.Filled.Home,
                 unselectedIcon = Icons.Outlined.Home,
             ),
             BottomNavBarItemData(
-                screen = Screen.Dashboard,
+                route = Screen.Dashboard.route,
                 name = "Dashboard",
                 selectedIcon = Icons.Filled.Info,
                 unselectedIcon = Icons.Outlined.Info,
             ),
             BottomNavBarItemData(
-                screen = Screen.Settings,
+                route = Screen.Settings.route,
                 name = "Settings",
                 selectedIcon = Icons.Filled.Settings,
                 unselectedIcon = Icons.Outlined.Settings,
             ),
             BottomNavBarItemData(
-                screen = Screen.Debug,
+                route = Screen.Debug.route,
                 name = "Debug",
                 selectedIcon = Icons.Filled.Build,
                 unselectedIcon = Icons.Outlined.Build,
             ),
         )
-    var selectedIndex by rememberSaveable {
-        mutableIntStateOf(0)
-    }
     NavigationBar {
-        navigationList.forEachIndexed {
-                index, item ->
-            val isSelected = selectedIndex == index
+        val navBackstackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackstackEntry?.destination
+        navigationList.forEach {
+                item ->
+            // if the whole expression evaluates to null, coalesce it to false
+            val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
             NavigationBarItem(
                 selected = isSelected,
                 onClick = {
-                    selectedIndex = index
-                    navController.navigate(item.screen.route)
+                    navController.navigate(item.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 },
                 icon = {
                     Icon(

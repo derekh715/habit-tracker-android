@@ -9,7 +9,6 @@ import edu.cuhk.csci3310.data.FrequencyUnit
 import edu.cuhk.csci3310.data.Habit
 import edu.cuhk.csci3310.data.HabitDao
 import kotlinx.coroutines.launch
-import java.time.Instant
 import java.util.Date
 import javax.inject.Inject
 
@@ -28,8 +27,15 @@ class HabitListViewModel
                 is HabitListEvent.AddDummyHabit -> {
                     insertTodoTest()
                 }
+                is HabitListEvent.RemoveHabit -> {
+                    removeHabit(event.habit)
+                }
             }
         }
+
+        val habitsList = habitDao.getHabitsOnly()
+        private var lastDeletedHabit: Habit? = null
+        private val logCategory = "HabitListViewModel"
 
         private fun insertTodoTest() {
             viewModelScope.launch {
@@ -38,7 +44,7 @@ class HabitListViewModel
                         title = "My Habit",
                         description = "Okay",
                         positive = true,
-                        until = Date.from(Instant.now()),
+                        until = Date(),
                         frequency =
                             Frequency(
                                 unit = FrequencyUnit.DAILY,
@@ -46,7 +52,15 @@ class HabitListViewModel
                             ),
                     ),
                 )
-                Log.i("viewModel", "dummy habit added")
+                Log.i(logCategory, "dummy habit added")
+            }
+        }
+
+        private fun removeHabit(habit: Habit) {
+            viewModelScope.launch {
+                lastDeletedHabit = habit
+                habitDao.deleteHabit(habit)
+                Log.i(logCategory, "deleted a habit")
             }
         }
     }
