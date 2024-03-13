@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import edu.cuhk.csci3310.ui.debug.DebugScreen
-import edu.cuhk.csci3310.ui.habitList.AddHabit
+import edu.cuhk.csci3310.ui.habitList.AddHabitScreen
 import edu.cuhk.csci3310.ui.habitList.HabitListScreen
 
 @Composable
@@ -20,7 +20,7 @@ fun NavHostScreens(navController: NavHostController) {
                 HabitListScreen(navController = navController)
             }
             composable(route = Screen.AddHabit.route) {
-                AddHabit()
+                AddHabitScreen()
             }
         }
 

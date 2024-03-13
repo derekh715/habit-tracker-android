@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import edu.cuhk.csci3310.ui.nav.BottomNavBar
@@ -31,6 +32,7 @@ class MainActivity : ComponentActivity() {
                         modifier =
                             Modifier
                                 .padding(paddingValues)
+                                .padding(horizontal = 32.dp, vertical = 16.dp)
                                 .fillMaxSize(),
                     ) {
                         NavHostScreens(navController = navController)
