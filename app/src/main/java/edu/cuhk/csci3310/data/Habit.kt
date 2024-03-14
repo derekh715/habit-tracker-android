@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.Date
 
-@Entity
+@Entity()
 data class Habit(
     @PrimaryKey(autoGenerate = true)
     val habitId: Long? = null,

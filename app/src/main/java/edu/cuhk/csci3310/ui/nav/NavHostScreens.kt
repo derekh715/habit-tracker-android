@@ -7,21 +7,34 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import edu.cuhk.csci3310.ui.addHabit.AddHabitScreen
 import edu.cuhk.csci3310.ui.debug.DebugScreen
+import edu.cuhk.csci3310.ui.groupList.GroupListScreen
 import edu.cuhk.csci3310.ui.habitList.HabitListScreen
 
 @Composable
 fun NavHostScreens(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Graph.HabitList.name) {
+    NavHost(navController = navController, startDestination = Graph.Habits.name) {
         navigation(
-            route = Graph.HabitList.name,
-            startDestination = Screen.Home.route,
+            route = Graph.Habits.name,
+            startDestination = Screen.HabitList.route,
         ) {
-            composable(route = Screen.Home.route) {
+            composable(route = Screen.HabitList.route) {
                 HabitListScreen(navController = navController)
             }
             composable(route = Screen.AddHabit.route) {
                 AddHabitScreen()
             }
+        }
+
+        navigation(
+            route = Graph.Groups.name,
+            startDestination = Screen.GroupList.route,
+        ) {
+            composable(route = Screen.GroupList.route) {
+                GroupListScreen(navController = navController)
+            }
+//            composable(route = Screen.AddGroup.route) {
+//                AddGroupScreen()
+//            }
         }
 
         composable(

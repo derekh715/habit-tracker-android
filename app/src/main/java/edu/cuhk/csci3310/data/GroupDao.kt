@@ -2,7 +2,9 @@ package edu.cuhk.csci3310.data
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Query
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GroupDao {
@@ -12,8 +14,8 @@ interface GroupDao {
     @Delete
     suspend fun deleteGroup(group: Group)
 
-//    @Query("SELECT * FROM group")
-//    suspend fun getGroups(): List<Group>
+    @Query("SELECT * FROM `group`")
+    fun getGroups(): Flow<List<Group>>
 
 //    @Query("")
 //    suspend fun addHabitIntoGroup(

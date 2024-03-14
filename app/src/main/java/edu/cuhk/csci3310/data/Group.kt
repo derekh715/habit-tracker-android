@@ -3,7 +3,7 @@ package edu.cuhk.csci3310.data
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity()
 data class Group(
     @PrimaryKey(autoGenerate = true)
     val groupId: Long? = null,

@@ -2,12 +2,12 @@ package edu.cuhk.csci3310.ui.nav
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -25,16 +25,16 @@ fun BottomNavBar(navController: NavController) {
     val navigationList =
         listOf(
             BottomNavBarItemData(
-                route = Graph.HabitList.name,
-                name = "Home",
+                route = Graph.Habits.name,
+                name = "Habits",
                 selectedIcon = Icons.Filled.Home,
                 unselectedIcon = Icons.Outlined.Home,
             ),
             BottomNavBarItemData(
-                route = Screen.Dashboard.route,
-                name = "Dashboard",
-                selectedIcon = Icons.Filled.Info,
-                unselectedIcon = Icons.Outlined.Info,
+                route = Graph.Groups.name,
+                name = "Groups",
+                selectedIcon = Icons.Filled.Folder,
+                unselectedIcon = Icons.Outlined.Folder,
             ),
             BottomNavBarItemData(
                 route = Screen.Settings.route,
