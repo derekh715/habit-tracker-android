@@ -1,4 +1,4 @@
-package edu.cuhk.csci3310.ui.util
+package edu.cuhk.csci3310.ui.formUtils
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row

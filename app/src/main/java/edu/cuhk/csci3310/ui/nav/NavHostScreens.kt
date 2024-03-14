@@ -5,8 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import edu.cuhk.csci3310.ui.addHabit.AddHabitScreen
 import edu.cuhk.csci3310.ui.debug.DebugScreen
-import edu.cuhk.csci3310.ui.habitList.AddHabitScreen
 import edu.cuhk.csci3310.ui.habitList.HabitListScreen
 
 @Composable

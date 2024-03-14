@@ -2,10 +2,8 @@ package edu.cuhk.csci3310.ui.habitList
 
 import android.app.Application
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.cuhk.csci3310.data.Frequency
 import edu.cuhk.csci3310.data.FrequencyUnit
@@ -22,8 +20,6 @@ class HabitListViewModel
         private val habitDao: HabitDao,
         application: Application,
     ) : AndroidViewModel(application) {
-        private val context = getApplication<Application>().applicationContext
-
         fun onEvent(event: HabitListEvent) {
             when (event) {
                 is HabitListEvent.AddHabit -> {
@@ -47,7 +43,8 @@ class HabitListViewModel
         private fun insertHabit(habit: Habit) {
             viewModelScope.launch {
                 habitDao.insertHabit(habit)
-                Toast.makeText(context, "Habit inserted", Toast.LENGTH_LONG).show()
+                // TODO: add ui event channel
+//                Toast.makeText(context, "Habit inserted", Toast.LENGTH_LONG).show()
             }
         }
 

@@ -1,4 +1,4 @@
-package edu.cuhk.csci3310.ui.util
+package edu.cuhk.csci3310.ui.formUtils
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
@@ -33,6 +33,6 @@ fun MyDatePicker(datePickerState: DatePickerState) {
         }
     }
     Button(onClick = { opened = true }) {
-        Text("Choose Date")
+        Text("Choose Date ${datePickerState.selectedDateMillis}")
     }
 }

@@ -1,4 +1,4 @@
-package edu.cuhk.csci3310.ui.util
+package edu.cuhk.csci3310.ui.formUtils
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,22 +12,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun MyTextField(
-    value: String,
+    info: TextInputInfo,
     onValueChange: (String) -> Unit,
-    icon: ImageVector,
-    label: String,
-    placeholder: String = "",
-    contentDescription: String = "icon",
-    isNumberInput: Boolean = false,
-    isError: Boolean = false,
-    errorText: String = "",
 ) {
+    val (value, errorMessage, showError, label, placeholder, icon, contentDescription, isNumberInput) = info
     Row(
         modifier = Modifier.padding(vertical = 16.dp),
     ) {
@@ -39,15 +32,17 @@ fun MyTextField(
             },
             placeholder = { Text(text = placeholder) },
             leadingIcon = {
-                Icon(icon, contentDescription = contentDescription)
+                icon?.let {
+                    Icon(icon, contentDescription = contentDescription)
+                }
             },
             supportingText = {
-                if (isError) {
-                    Text(text = errorText, color = MaterialTheme.colorScheme.error)
+                if (showError) {
+                    Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
                 }
             },
             trailingIcon = {
-                if (isError) {
+                if (showError) {
                     Icon(Icons.Filled.Error, "error", tint = MaterialTheme.colorScheme.error)
                 }
             },
