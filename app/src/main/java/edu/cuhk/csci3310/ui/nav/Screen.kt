@@ -6,7 +6,7 @@ sealed class Screen(
     // habits graph
     data object HabitList : Screen("habit_list")
 
-    data object HabitInfo : Screen("habit")
+    data object HabitDetail : Screen("habit_detail")
 
     data object AddHabit : Screen("add_habit")
 

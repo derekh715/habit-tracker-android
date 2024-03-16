@@ -11,50 +11,39 @@ import edu.cuhk.csci3310.ui.formUtils.MyDatePicker
 import edu.cuhk.csci3310.ui.formUtils.MyDropdown
 import edu.cuhk.csci3310.ui.formUtils.MyRadioGroup
 import edu.cuhk.csci3310.ui.formUtils.MyTextField
-import edu.cuhk.csci3310.ui.habitList.HabitListEvent
-import edu.cuhk.csci3310.ui.habitList.HabitListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddHabitScreen(
-    viewModel: HabitListViewModel = hiltViewModel(),
-    addHabitViewModel: AddHabitViewModel = hiltViewModel(),
-) {
-    val name = addHabitViewModel.title.collectAsState()
-    val description = addHabitViewModel.description.collectAsState()
-    val times = addHabitViewModel.times.collectAsState()
-    val options = addHabitViewModel.options.collectAsState()
-    val polarities = addHabitViewModel.polarities.collectAsState()
-    val datePickerState = addHabitViewModel.datePickerState
+fun AddHabitScreen(viewModel: AddHabitViewModel = hiltViewModel()) {
+    val name = viewModel.title.collectAsState()
+    val description = viewModel.description.collectAsState()
+    val times = viewModel.times.collectAsState()
+    val options = viewModel.options.collectAsState()
+    val polarities = viewModel.polarities.collectAsState()
+    val datePickerState = viewModel.datePickerState
 
     Column {
         MyTextField(
             info = name.value,
-            onValueChange = { addHabitViewModel.changeName(it) },
+            onValueChange = { viewModel.changeName(it) },
         )
         MyTextField(
             info = description.value,
-            onValueChange = { addHabitViewModel.changeDescription(it) },
+            onValueChange = { viewModel.changeDescription(it) },
         )
         MyDatePicker(datePickerState = datePickerState)
 
-        MyRadioGroup(items = polarities.value, onSelected = { addHabitViewModel.changePolarity(it) })
-        MyDropdown(options = options.value, setOption = { addHabitViewModel.changeOption(it.text) })
+        MyRadioGroup(items = polarities.value, onSelected = { viewModel.changePolarity(it) })
+        MyDropdown(options = options.value, setOption = { viewModel.changeOption(it.text) })
 
         MyTextField(
             info = times.value,
-            onValueChange = { addHabitViewModel.changeTime(it) },
+            onValueChange = { viewModel.changeTime(it) },
         )
 
         Button(onClick = {
-            val habit =
-                addHabitViewModel.createHabitFromForm(
-                    datePickerState = datePickerState,
-                ) ?: return@Button
             viewModel.onEvent(
-                HabitListEvent.AddHabit(
-                    habit,
-                ),
+                AddHabitEvent.AddHabit,
             )
         }) {
             Text("Add Habit")

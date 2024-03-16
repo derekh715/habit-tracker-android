@@ -17,8 +17,9 @@ import edu.cuhk.csci3310.data.Habit
 fun HabitItem(
     habit: Habit,
     deleteHabit: (habit: Habit) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column {
+    Column(modifier = modifier) {
         Text(text = habit.title, fontSize = 32.sp)
         Text(text = habit.description ?: "", fontSize = 24.sp)
         Icon(

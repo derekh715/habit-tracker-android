@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [Group::class, Habit::class, Record::class],
+    entities = [Group::class, Habit::class, Record::class, HabitGroupCrossRef::class],
     version = 1,
 )
 @TypeConverters(Converters::class)

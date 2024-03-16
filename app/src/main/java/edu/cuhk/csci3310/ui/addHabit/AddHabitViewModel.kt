@@ -1,18 +1,17 @@
 package edu.cuhk.csci3310.ui.addHabit
 
-import android.app.Application
-import android.nfc.FormatException
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.cuhk.csci3310.data.Frequency
 import edu.cuhk.csci3310.data.FrequencyUnit
 import edu.cuhk.csci3310.data.Habit
+import edu.cuhk.csci3310.data.HabitDao
 import edu.cuhk.csci3310.ui.formUtils.TextInputInfo
 import edu.cuhk.csci3310.ui.formUtils.ToggleableInfo
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,9 +24,9 @@ import javax.inject.Inject
 @HiltViewModel
 class AddHabitViewModel
     @Inject
-    constructor(application: Application) : AndroidViewModel(
-            application,
-        ) {
+    constructor(
+        private val habitDao: HabitDao,
+    ) : ViewModel() {
         private val _title =
             MutableStateFlow(
                 TextInputInfo(
@@ -146,12 +145,14 @@ class AddHabitViewModel
         }
 
         fun changeTime(newTime: String) {
-            viewModelScope.launch {
+            if (newTime.isNotEmpty()) {
                 try {
                     newTime.toInt()
-                } catch (error: FormatException) {
-                    return@launch
+                } catch (error: NumberFormatException) {
+                    return
                 }
+            }
+            viewModelScope.launch {
                 _times.emit(
                     _times.value.copy(
                         value = newTime,
@@ -161,9 +162,9 @@ class AddHabitViewModel
         }
 
         @OptIn(ExperimentalMaterial3Api::class)
-        fun createHabitFromForm(datePickerState: DatePickerState): Habit? {
+        fun addHabit() {
             // check if date is selected
-            datePickerState.selectedDateMillis ?: return null
+            datePickerState.selectedDateMillis ?: return
 
             // check if frequency is selected
             val unit =
@@ -172,21 +173,34 @@ class AddHabitViewModel
                     "Weekly" -> FrequencyUnit.WEEKLY
                     "Monthly" -> FrequencyUnit.MONTHLY
                     "Yearly" -> FrequencyUnit.YEARLY
-                    else -> return null
+                    else -> return
                 }
 
-            return Habit(
-                description = description.value.value,
-                title = title.value.value,
-                // is positive polarity selected? If yes then it is positive
-                // the polarity can either be positive or negative
-                positive = _polarities.value.first().toggled,
-                until = Date(datePickerState.selectedDateMillis!!),
-                frequency =
-                    Frequency(
-                        unit = unit,
-                        times = times.value.value.toInt(),
-                    ),
-            )
+            val habit =
+                Habit(
+                    description = description.value.value,
+                    title = title.value.value,
+                    // is positive polarity selected? If yes then it is positive
+                    // the polarity can either be positive or negative
+                    positive = _polarities.value.first().toggled,
+                    until = Date(datePickerState.selectedDateMillis!!),
+                    frequency =
+                        Frequency(
+                            unit = unit,
+                            times = times.value.value.toInt(),
+                        ),
+                )
+
+            viewModelScope.launch {
+                habitDao.insertHabit(habit)
+            }
+        }
+
+        fun onEvent(event: AddHabitEvent) {
+            when (event) {
+                is AddHabitEvent.AddHabit -> {
+                    addHabit()
+                }
+            }
         }
     }

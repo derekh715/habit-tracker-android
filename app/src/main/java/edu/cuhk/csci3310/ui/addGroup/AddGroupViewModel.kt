@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(ExperimentalStdlibApi::class)
 @HiltViewModel
 class AddGroupViewModel
     @Inject
@@ -88,7 +87,7 @@ class AddGroupViewModel
                     Group(
                         name = _name.value.value,
                         description = _description.value.value,
-                        colour = _colour.value.toString(),
+                        colour = _colour.value,
                     )
                 groupDao.insertGroup(group)
             }

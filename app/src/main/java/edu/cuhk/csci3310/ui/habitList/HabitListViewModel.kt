@@ -1,14 +1,18 @@
 package edu.cuhk.csci3310.ui.habitList
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.cuhk.csci3310.data.Frequency
 import edu.cuhk.csci3310.data.FrequencyUnit
 import edu.cuhk.csci3310.data.Habit
 import edu.cuhk.csci3310.data.HabitDao
+import edu.cuhk.csci3310.ui.nav.Screen
+import edu.cuhk.csci3310.ui.utils.CommonUiEvent
+import edu.cuhk.csci3310.ui.utils.UiEvent
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
@@ -18,12 +22,14 @@ class HabitListViewModel
     @Inject
     constructor(
         private val habitDao: HabitDao,
-        application: Application,
-    ) : AndroidViewModel(application) {
+    ) : ViewModel() {
+        private val _uiChannel = Channel<UiEvent>()
+        val uiChannel = _uiChannel.receiveAsFlow()
+
         fun onEvent(event: HabitListEvent) {
             when (event) {
                 is HabitListEvent.AddHabit -> {
-                    insertHabit(event.habit)
+                    sendEvent(CommonUiEvent.Navigate(Screen.AddHabit.route))
                 }
                 is HabitListEvent.ChangeHabit -> {
                 }
@@ -33,20 +39,15 @@ class HabitListViewModel
                 is HabitListEvent.RemoveHabit -> {
                     removeHabit(event.habit)
                 }
+                is HabitListEvent.HabitDetail -> {
+                    sendEvent(CommonUiEvent.Navigate(Screen.HabitDetail.route + "?habitId=${event.habit.habitId}"))
+                }
             }
         }
 
         val habitsList = habitDao.getHabitsOnly()
         private var lastDeletedHabit: Habit? = null
         private val logCategory = "HabitListViewModel"
-
-        private fun insertHabit(habit: Habit) {
-            viewModelScope.launch {
-                habitDao.insertHabit(habit)
-                // TODO: add ui event channel
-//                Toast.makeText(context, "Habit inserted", Toast.LENGTH_LONG).show()
-            }
-        }
 
         private fun insertTodoTest() {
             viewModelScope.launch {
@@ -72,6 +73,12 @@ class HabitListViewModel
                 lastDeletedHabit = habit
                 habitDao.deleteHabit(habit)
                 Log.i(logCategory, "deleted a habit")
+            }
+        }
+
+        private fun sendEvent(event: UiEvent) {
+            viewModelScope.launch {
+                _uiChannel.send(event)
             }
         }
     }

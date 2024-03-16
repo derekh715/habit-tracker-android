@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 data class Group(
     @PrimaryKey(autoGenerate = true)
     val groupId: Long? = null,
-    // hex colour
-    val colour: String,
+    // hex colour in ARGB form
+    val colour: Int,
     val name: String,
     val description: String?,
 )
