@@ -2,9 +2,16 @@ package edu.cuhk.csci3310.data
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Embedded
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
+
+data class GroupListOption(
+    @Embedded
+    val group: Group,
+    var selected: Boolean,
+)
 
 @Dao
 interface HabitDao {
@@ -25,4 +32,17 @@ interface HabitDao {
 
     @Upsert
     suspend fun addRecord(record: Record)
+
+    @Query(
+        "SELECT g.* FROM habit_group_cross_ref hg INNER JOIN `group` g ON g.groupId = hg.groupId " +
+            "INNER JOIN habit h ON h.habitId = hg.habitId WHERE hg.habitId = :habitId",
+    )
+    fun getGroupsOfHabit(habitId: Long): Flow<List<Group>>
+
+    @Query(
+        "SELECT g.*, (SELECT COUNT(*)" +
+            " FROM habit_group_cross_ref hg WHERE g.groupId = hg.groupId AND :habitId = hg.habitId)" +
+            " as selected FROM `group` g",
+    )
+    suspend fun getAllGroupsWithIsInGroupOrNot(habitId: Long): List<GroupListOption>
 }

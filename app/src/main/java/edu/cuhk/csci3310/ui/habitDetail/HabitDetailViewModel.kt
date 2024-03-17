@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.cuhk.csci3310.data.GroupDao
-import edu.cuhk.csci3310.data.GroupNameAndId
+import edu.cuhk.csci3310.data.GroupListOption
 import edu.cuhk.csci3310.data.Habit
 import edu.cuhk.csci3310.data.HabitDao
 import edu.cuhk.csci3310.data.HabitGroupCrossRef
@@ -32,12 +32,11 @@ class HabitDetailViewModel
         private val _loadingStatus = MutableStateFlow(FetchStatus.FETCHING)
         val loadingStatus = _loadingStatus.asStateFlow()
 
-        // I probably have to cast it to a MutableStateFlow later
         private val _item = MutableStateFlow<Habit?>(null)
-        var item = _item.asStateFlow()
+        val item = _item.asStateFlow()
 
-        private val _groups = MutableStateFlow<List<GroupNameAndId>>(listOf())
-        var groups = _groups.asStateFlow()
+        private val _groups = MutableStateFlow<List<GroupListOption>>(listOf())
+        val groups = _groups.asStateFlow()
 
         fun initialize() {
             viewModelScope.launch {
@@ -46,6 +45,9 @@ class HabitDetailViewModel
                     _loadingStatus.emit(FetchStatus.NOT_EXISTS)
                 } else {
                     _item.emit(habitDao.getHabitById(habitId))
+                    _groups.emit(
+                        habitDao.getAllGroupsWithIsInGroupOrNot(habitId),
+                    )
                     _loadingStatus.emit(FetchStatus.FINISHED)
                 }
             }
@@ -53,12 +55,6 @@ class HabitDetailViewModel
 
         private fun addToGroup() {
             viewModelScope.launch {
-                if (_groups.value.isEmpty()) {
-                    _groups.emit(
-                        groupDao
-                            .getGroupNamesAndIds(),
-                    )
-                }
                 sendEvent(HabitDetailScreenUiEvent.ShowAddToGroupDialog)
             }
         }
@@ -66,10 +62,32 @@ class HabitDetailViewModel
         private fun addHabitToGroup(event: HabitDetailEvent.AddToGroup) {
             _item.value?.let {
                 viewModelScope.launch {
-                    event.indices.forEach {
-                        val group = _groups.value[it]
-                        groupDao.addHabitIntoGroup(HabitGroupCrossRef(groupId = group.groupId, habitId = _item.value!!.habitId!!))
+                    val newList = mutableListOf<GroupListOption>()
+                    _groups.value.forEach {
+                        newList.add(it.copy())
                     }
+
+                    event.newlyAdded.forEach {
+                        val option = _groups.value[it]
+                        groupDao.addHabitIntoGroup(
+                            HabitGroupCrossRef(
+                                groupId = option.group.groupId!!,
+                                habitId = _item.value!!.habitId!!,
+                            ),
+                        )
+                        newList[it].selected = true
+                    }
+                    event.newlyRemoved.forEach {
+                        val option = _groups.value[it]
+                        groupDao.removeHabitFromGroup(
+                            HabitGroupCrossRef(
+                                groupId = option.group.groupId!!,
+                                habitId = _item.value!!.habitId!!,
+                            ),
+                        )
+                        newList[it].selected = false
+                    }
+                    _groups.emit(newList)
                 }
             }
         }

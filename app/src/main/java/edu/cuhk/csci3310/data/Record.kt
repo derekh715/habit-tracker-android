@@ -11,6 +11,7 @@ enum class RecordStatus {
 }
 
 @Entity(
+    tableName = "record",
     foreignKeys = [
         ForeignKey(
             entity = Habit::class,
