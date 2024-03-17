@@ -1,10 +1,9 @@
 package edu.cuhk.csci3310.ui.addHabit
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Task
-import androidx.compose.material3.DatePickerState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,8 +16,7 @@ import edu.cuhk.csci3310.ui.formUtils.ToggleableInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.Date
-import java.util.Locale
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -87,6 +85,9 @@ class AddHabitViewModel
             )
         val options = _options.asStateFlow()
 
+        private val _until = MutableStateFlow(LocalDate.now())
+        val until = _until.asStateFlow()
+
         private val _times =
             MutableStateFlow(
                 TextInputInfo(
@@ -94,12 +95,10 @@ class AddHabitViewModel
                     icon = Icons.Filled.Description,
                     label = "Times",
                     isNumberInput = true,
+                    helperMessage = "Daily can only be once.",
                 ),
             )
         val times = _times.asStateFlow()
-
-        @OptIn(ExperimentalMaterial3Api::class)
-        val datePickerState = DatePickerState(Locale.getDefault())
 
         fun changeName(newName: String) {
             viewModelScope.launch {
@@ -144,6 +143,14 @@ class AddHabitViewModel
             }
         }
 
+        fun changeUntil(newUntil: LocalDate) {
+            viewModelScope.launch {
+                _until.emit(
+                    newUntil,
+                )
+            }
+        }
+
         fun changeTime(newTime: String) {
             if (newTime.isNotEmpty()) {
                 try {
@@ -161,11 +168,7 @@ class AddHabitViewModel
             }
         }
 
-        @OptIn(ExperimentalMaterial3Api::class)
-        fun addHabit() {
-            // check if date is selected
-            datePickerState.selectedDateMillis ?: return
-
+        private fun addHabit() {
             // check if frequency is selected
             val unit =
                 when (_options.value.find { it.toggled }!!.text) {
@@ -183,7 +186,7 @@ class AddHabitViewModel
                     // is positive polarity selected? If yes then it is positive
                     // the polarity can either be positive or negative
                     positive = _polarities.value.first().toggled,
-                    until = Date(datePickerState.selectedDateMillis!!),
+                    until = _until.value,
                     frequency =
                         Frequency(
                             unit = unit,

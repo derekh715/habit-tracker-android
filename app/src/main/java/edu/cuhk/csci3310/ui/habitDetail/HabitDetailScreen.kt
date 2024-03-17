@@ -1,6 +1,5 @@
 package edu.cuhk.csci3310.ui.habitDetail
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,7 +27,6 @@ fun HabitDetailScreen(viewModel: HabitDetailViewModel = hiltViewModel()) {
     val item = viewModel.item.collectAsState(initial = null)
     val groups = viewModel.groups.collectAsState(initial = listOf())
     val inGroups = groups.value.filter { it.selected }
-    Log.i("App", "$groups $inGroups")
     val state = rememberUseCaseState(visible = false)
     LaunchedEffect(key1 = true, block = {
         viewModel.uiChannel.collect {
@@ -57,6 +55,7 @@ fun HabitDetailScreen(viewModel: HabitDetailViewModel = hiltViewModel()) {
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Column {
+                        Text("This habit will end in ${habit.until}")
                         // TODO: completing habits
                     }
                     Spacer(modifier = Modifier.height(16.dp))

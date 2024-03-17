@@ -20,35 +20,36 @@ fun MyTextField(
     info: TextInputInfo,
     onValueChange: (String) -> Unit,
 ) {
-    val (value, errorMessage, showError, label, placeholder, icon, contentDescription, isNumberInput) = info
     Row(
         modifier = Modifier.padding(vertical = 16.dp),
     ) {
         TextField(
-            value = value,
+            value = info.value,
             onValueChange = onValueChange,
             label = {
-                Text(text = label)
+                Text(text = info.label)
             },
-            placeholder = { Text(text = placeholder) },
+            placeholder = { Text(text = info.placeholder) },
             leadingIcon = {
-                icon?.let {
-                    Icon(icon, contentDescription = contentDescription)
+                info.icon?.let {
+                    Icon(info.icon, contentDescription = info.contentDescription)
                 }
             },
             supportingText = {
-                if (showError) {
-                    Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+                if (info.showError) {
+                    Text(text = info.errorMessage, color = MaterialTheme.colorScheme.error)
+                } else {
+                    Text(text = info.helperMessage)
                 }
             },
             trailingIcon = {
-                if (showError) {
+                if (info.showError) {
                     Icon(Icons.Filled.Error, "error", tint = MaterialTheme.colorScheme.error)
                 }
             },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions =
-                when (isNumberInput) {
+                when (info.isNumberInput) {
                     true ->
                         KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number,

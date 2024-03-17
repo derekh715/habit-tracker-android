@@ -36,6 +36,7 @@ data class ToggleableInfo(
 data class TextInputInfo(
     val value: String = "",
     val errorMessage: String = "",
+    val helperMessage: String = "",
     val showError: Boolean = false,
     val label: String = "",
     val placeholder: String = "",

@@ -2,7 +2,6 @@ package edu.cuhk.csci3310.ui.addHabit
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -12,7 +11,6 @@ import edu.cuhk.csci3310.ui.formUtils.MyDropdown
 import edu.cuhk.csci3310.ui.formUtils.MyRadioGroup
 import edu.cuhk.csci3310.ui.formUtils.MyTextField
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddHabitScreen(viewModel: AddHabitViewModel = hiltViewModel()) {
     val name = viewModel.title.collectAsState()
@@ -20,7 +18,7 @@ fun AddHabitScreen(viewModel: AddHabitViewModel = hiltViewModel()) {
     val times = viewModel.times.collectAsState()
     val options = viewModel.options.collectAsState()
     val polarities = viewModel.polarities.collectAsState()
-    val datePickerState = viewModel.datePickerState
+    val until = viewModel.until.collectAsState()
 
     Column {
         MyTextField(
@@ -31,7 +29,7 @@ fun AddHabitScreen(viewModel: AddHabitViewModel = hiltViewModel()) {
             info = description.value,
             onValueChange = { viewModel.changeDescription(it) },
         )
-        MyDatePicker(datePickerState = datePickerState)
+        MyDatePicker(until = until.value, dateChosen = { viewModel.changeUntil(it) })
 
         MyRadioGroup(items = polarities.value, onSelected = { viewModel.changePolarity(it) })
         MyDropdown(options = options.value, setOption = { viewModel.changeOption(it.text) })

@@ -14,7 +14,7 @@ import edu.cuhk.csci3310.ui.utils.UiEvent
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.util.Date
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,7 +56,7 @@ class HabitListViewModel
                         title = "My Habit",
                         description = "Okay",
                         positive = true,
-                        until = Date(),
+                        until = LocalDate.now(),
                         frequency =
                             Frequency(
                                 unit = FrequencyUnit.DAILY,
