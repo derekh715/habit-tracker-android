@@ -6,6 +6,7 @@ import androidx.room.Embedded
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 data class GroupListOption(
     @Embedded
@@ -27,11 +28,18 @@ interface HabitDao {
     @Query("SELECT * FROM habit")
     fun getHabitsOnly(): Flow<List<Habit>>
 
-//    @Query("SELECT * FROM record WHERE habitId = :habitId")
-//    suspend fun getRecordsOfHabit(habitId: Long): List<Record>
+    @Query("SELECT * FROM record WHERE habitId = :habitId AND date >= :notBefore ORDER BY date DESC")
+    suspend fun getRecordsOfHabit(
+        habitId: Long,
+        notBefore: LocalDate,
+    ): List<Record>
 
+    // long returns the record id
     @Upsert
-    suspend fun addRecord(record: Record)
+    suspend fun addRecord(record: Record): Long
+
+    @Delete
+    suspend fun deleteRecord(record: Record)
 
     @Query(
         "SELECT g.* FROM habit_group_cross_ref hg INNER JOIN `group` g ON g.groupId = hg.groupId " +

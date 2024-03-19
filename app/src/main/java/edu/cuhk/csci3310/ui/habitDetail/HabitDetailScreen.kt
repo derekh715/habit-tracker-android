@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,9 +26,11 @@ import edu.cuhk.csci3310.ui.utils.FetchStatus
 @Composable
 fun HabitDetailScreen(viewModel: HabitDetailViewModel = hiltViewModel()) {
     val status = viewModel.loadingStatus.collectAsState()
-    val item = viewModel.item.collectAsState(initial = null)
+    val item = viewModel.habit.collectAsState(initial = null)
     val groups = viewModel.groups.collectAsState(initial = listOf())
     val inGroups = groups.value.filter { it.selected }
+    val records = viewModel.records.collectAsState()
+
     val state = rememberUseCaseState(visible = false)
     LaunchedEffect(key1 = true, block = {
         viewModel.uiChannel.collect {
@@ -55,8 +59,20 @@ fun HabitDetailScreen(viewModel: HabitDetailViewModel = hiltViewModel()) {
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Column {
-                        Text("This habit will end in ${habit.until}")
-                        // TODO: completing habits
+                        Text(
+                            "This habit will end in ${habit.until}",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Spacer(modifier = Modifier.height(36.dp))
+                        LazyRow {
+                            itemsIndexed(records.value) {
+                                    index, rec ->
+                                ToggleableDayEntry(record = rec, changeStatus = {
+                                    viewModel.onEvent(HabitDetailEvent.ChangeRecord(index = index, newStatus = it))
+                                })
+                            }
+                        }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Column(horizontalAlignment = Alignment.Start) {

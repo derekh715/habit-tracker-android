@@ -3,11 +3,13 @@ package edu.cuhk.csci3310.data
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import java.time.LocalDate
 
 enum class RecordStatus {
     FULFILLED,
     UNFULFILLED,
     SKIPPED,
+    NOTFILLED,
 }
 
 @Entity(
@@ -23,10 +25,11 @@ enum class RecordStatus {
 )
 data class Record(
     @PrimaryKey(autoGenerate = true)
-    val recordId: Long,
+    var recordId: Long?,
+    var habitId: Long?,
     // foreign key: which habit is this record about?
-    val habitId: Long,
     val status: RecordStatus,
     // skipped reason (if status is not skipped, ignore this field)
     val reason: String?,
+    val date: LocalDate,
 )
