@@ -22,4 +22,7 @@ interface GroupDao {
 
     @Delete
     suspend fun removeHabitFromGroup(pair: HabitGroupCrossRef)
+
+    @Query("DELETE FROM `group`")
+    suspend fun deleteAllGroups()
 }

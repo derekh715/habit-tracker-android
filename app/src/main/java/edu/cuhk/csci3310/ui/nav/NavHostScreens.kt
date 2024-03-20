@@ -58,7 +58,7 @@ fun NavHostScreens(navController: NavHostController) {
         composable(
             route = Screen.Debug.route,
         ) {
-            DebugScreen(navController = navController)
+            DebugScreen()
         }
     }
 }

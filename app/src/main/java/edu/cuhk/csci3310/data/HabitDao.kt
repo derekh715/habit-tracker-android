@@ -53,4 +53,13 @@ interface HabitDao {
             " as selected FROM `group` g",
     )
     suspend fun getAllGroupsWithIsInGroupOrNot(habitId: Long): List<GroupListOption>
+
+    @Query("SELECT habitId FROM habit")
+    suspend fun getAllHabitIds(): List<Long>
+
+    @Query("DELETE FROM habit")
+    suspend fun deleteAllHabits()
+
+    @Query("DELETE FROM record")
+    suspend fun deleteAllRecords()
 }

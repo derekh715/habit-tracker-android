@@ -1,21 +1,43 @@
 package edu.cuhk.csci3310.ui.debug
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import edu.cuhk.csci3310.ui.habitList.HabitListEvent
-import edu.cuhk.csci3310.ui.habitList.HabitListViewModel
+import edu.cuhk.csci3310.ui.formUtils.MyTextField
 
 @Composable
-fun DebugScreen(
-    navController: NavController,
-    viewModel: HabitListViewModel = hiltViewModel(),
-) {
-    Button(onClick = {
-        viewModel.onEvent(HabitListEvent.AddDummyHabit)
-    }) {
-        Text("Add one test item")
+fun DebugScreen(viewModel: DebugScreenViewModel = hiltViewModel()) {
+    val hAmount = viewModel.habitAmount.collectAsState()
+    val gAmount = viewModel.groupAmount.collectAsState()
+    val rAmount = viewModel.recordAmount.collectAsState()
+
+    Column {
+        MyTextField(info = hAmount.value, onValueChange = {
+            viewModel.valueChanged(it, TextInputEnum.Habit)
+        })
+        Button(onClick = {
+            viewModel.addHabits()
+        }) {
+            Text("Add dummy habit(s)")
+        }
+        MyTextField(info = gAmount.value, onValueChange = {
+            viewModel.valueChanged(it, TextInputEnum.Group)
+        })
+        Button(onClick = {
+            viewModel.addGroups()
+        }) {
+            Text("Add dummy group(s)")
+        }
+        MyTextField(info = rAmount.value, onValueChange = {
+            viewModel.valueChanged(it, TextInputEnum.Record)
+        })
+        Button(onClick = {
+            viewModel.addRecords()
+        }) {
+            Text("Add dummy record(s)")
+        }
     }
 }
