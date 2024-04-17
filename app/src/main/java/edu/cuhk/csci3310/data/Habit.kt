@@ -20,4 +20,5 @@ data class Habit(
     val description: String?,
     @Embedded
     val frequency: Frequency,
+    val nextTime: LocalDate,
 )

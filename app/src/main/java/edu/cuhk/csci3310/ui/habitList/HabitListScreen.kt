@@ -1,12 +1,8 @@
 package edu.cuhk.csci3310.ui.habitList
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -15,19 +11,28 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import edu.cuhk.csci3310.ui.formUtils.MyDropdown
+import edu.cuhk.csci3310.ui.formUtils.ToggleableInfo
 import edu.cuhk.csci3310.ui.utils.CommonUiEvent
-import kotlinx.coroutines.flow.collect
 
 @Composable
 fun HabitListScreen(
     viewModel: HabitListViewModel = hiltViewModel(),
     onNavigate: (CommonUiEvent.Navigate) -> Unit,
 ) {
-    val habits = viewModel.habitsList.collectAsState(initial = listOf())
+    val habitsList = viewModel.habitsList.collectAsState(initial = listOf())
+    val groupList = viewModel.groupsList.collectAsState(initial = mapOf())
+    var option by remember {
+        mutableStateOf("All Habits")
+    }
     LaunchedEffect(key1 = true, block = {
         viewModel.uiChannel.collect {
                 event ->
@@ -41,23 +46,26 @@ fun HabitListScreen(
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
-        LazyColumn(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-        ) {
-            items(habits.value) {
-                    habit ->
-                HabitItem(
-                    habit = habit,
-                    deleteHabit = { viewModel.onEvent(HabitListEvent.RemoveHabit(it)) },
-                    modifier =
-                        Modifier.clickable {
-                            viewModel.onEvent(HabitListEvent.HabitDetail(habit))
-                        },
-                )
-            }
+        MyDropdown(
+            options =
+                listOf(
+                    ToggleableInfo(toggled = option == "All Habits", text = "All Habits"),
+                    ToggleableInfo(toggled = option == "By Group", text = "By Group"),
+                ),
+            setOption = {
+                option = it.text
+            },
+        )
+        if (option == "All Habits") {
+            HabitList(habits = habitsList.value, deleteHabit = {
+                viewModel.onEvent(HabitListEvent.RemoveHabit(it))
+            }, habitDetail = {
+                viewModel.onEvent(HabitListEvent.HabitDetail(it))
+            }, modifier = Modifier.weight(1f))
+        } else {
+            GroupList(groupList = groupList.value, deleteHabit = {
+                viewModel.onEvent(HabitListEvent.RemoveHabit(it))
+            })
         }
         Button(
             onClick = {

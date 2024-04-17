@@ -9,8 +9,6 @@ sealed class HabitListEvent {
     // brings the user to the habit detail page
     data class HabitDetail(val habit: Habit) : HabitListEvent()
 
-    data object AddDummyHabit : HabitListEvent()
-
     // brings the user to the habit info page
     data class ChangeHabit(val habit: Habit) : HabitListEvent()
 

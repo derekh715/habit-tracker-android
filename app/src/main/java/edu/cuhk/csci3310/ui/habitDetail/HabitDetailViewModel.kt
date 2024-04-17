@@ -1,6 +1,5 @@
 package edu.cuhk.csci3310.ui.habitDetail
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -140,14 +139,12 @@ class HabitDetailViewModel
         private fun recordStatusChange(event: HabitDetailEvent.ChangeRecord) {
             _habit.value?.let {
                 viewModelScope.launch {
-                    Log.i("App", "${event.index} ${event.newStatus}")
                     val newList = mutableListOf<Record>()
                     _records.value.forEach { newList.add(it) }
                     newList[event.index] = newList[event.index].copy(status = event.newStatus)
 
                     when (event.newStatus) {
                         RecordStatus.NOTFILLED -> {
-                            Log.i("App", _records.value[event.index].toString())
                             habitDao.deleteRecord(_records.value[event.index])
                         }
                         else -> {

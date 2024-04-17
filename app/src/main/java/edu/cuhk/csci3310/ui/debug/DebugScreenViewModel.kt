@@ -14,6 +14,7 @@ import edu.cuhk.csci3310.data.HabitDao
 import edu.cuhk.csci3310.data.Record
 import edu.cuhk.csci3310.data.RecordStatus
 import edu.cuhk.csci3310.ui.formUtils.TextInputInfo
+import edu.cuhk.csci3310.ui.utils.Calculations.calculateNextDay
 import io.github.serpro69.kfaker.Faker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -98,17 +99,19 @@ class DebugScreenViewModel
         fun addHabits() {
             viewModelScope.launch {
                 repeat(_habitAmount.value.value.toInt()) {
+                    val freq =
+                        Frequency(
+                            times = rand.nextInt(from = 1, until = 10),
+                            unit = FrequencyUnit.MONTHLY,
+                        )
                     habitDao.insertHabit(
                         Habit(
                             description = faker.lorem.words(),
                             title = faker.lorem.words(),
-                            frequency =
-                                Frequency(
-                                    times = rand.nextInt(from = 1, until = 10),
-                                    unit = FrequencyUnit.MONTHLY,
-                                ),
+                            frequency = freq,
                             positive = listOf(false, true).random(),
                             until = generateRandomDate(),
+                            nextTime = calculateNextDay(freq),
                         ),
                     )
                 }

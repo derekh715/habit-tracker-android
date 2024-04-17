@@ -3,6 +3,7 @@ package edu.cuhk.csci3310.data
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Embedded
+import androidx.room.MapColumn
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +13,12 @@ data class GroupListOption(
     @Embedded
     val group: Group,
     var selected: Boolean,
+)
+
+data class HabitAndGroup(
+    @Embedded
+    val habit: Habit,
+    val groupName: String,
 )
 
 @Dao
@@ -46,6 +53,21 @@ interface HabitDao {
             "INNER JOIN habit h ON h.habitId = hg.habitId WHERE hg.habitId = :habitId",
     )
     fun getGroupsOfHabit(habitId: Long): Flow<List<Group>>
+
+    @Query(
+        "SELECT h.*, g.name as groupName FROM habit_group_cross_ref hg " +
+            "INNER JOIN habit h ON hg.habitId = h.habitId " +
+            "INNER JOIN `group` g ON hg.groupId = g.groupId" +
+            " UNION SELECT h.*, 'No Group' as groupName FROM habit h " +
+            "WHERE h.habitId NOT IN (SELECT habitId FROM habit_group_cross_ref) ",
+    )
+    fun getAllHabitsWithGroups(): Flow<
+        Map<
+            @MapColumn(columnName = "groupName")
+            String,
+            List<Habit>,
+        >,
+    >
 
     @Query(
         "SELECT g.*, (SELECT COUNT(*)" +

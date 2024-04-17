@@ -1,6 +1,5 @@
 package edu.cuhk.csci3310.ui.addHabit
 
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Task
@@ -13,6 +12,7 @@ import edu.cuhk.csci3310.data.Habit
 import edu.cuhk.csci3310.data.HabitDao
 import edu.cuhk.csci3310.ui.formUtils.TextInputInfo
 import edu.cuhk.csci3310.ui.formUtils.ToggleableInfo
+import edu.cuhk.csci3310.ui.utils.Calculations.calculateNextDay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -179,6 +179,11 @@ class AddHabitViewModel
                     else -> return
                 }
 
+            val freq =
+                Frequency(
+                    unit = unit,
+                    times = times.value.value.toInt(),
+                )
             val habit =
                 Habit(
                     description = description.value.value,
@@ -187,11 +192,8 @@ class AddHabitViewModel
                     // the polarity can either be positive or negative
                     positive = _polarities.value.first().toggled,
                     until = _until.value,
-                    frequency =
-                        Frequency(
-                            unit = unit,
-                            times = times.value.value.toInt(),
-                        ),
+                    frequency = freq,
+                    nextTime = calculateNextDay(freq),
                 )
 
             viewModelScope.launch {
