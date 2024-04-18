@@ -39,5 +39,20 @@ fun DebugScreen(viewModel: DebugScreenViewModel = hiltViewModel()) {
         }) {
             Text("Add dummy record(s)")
         }
+        Button(onClick = {
+            viewModel.showTestNotification()
+        }) {
+            Text("Show Test Notification")
+        }
+        Button(onClick = {
+            viewModel.showDailyNotification()
+        }) {
+            Text("Show Daily Notification")
+        }
+        Button(onClick = {
+            viewModel.scheduleNotification()
+        }) {
+            Text("Schedule Test Notification")
+        }
     }
 }

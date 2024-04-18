@@ -1,9 +1,12 @@
 package edu.cuhk.csci3310.ui.debug
 
+import android.app.Application
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.cuhk.csci3310.data.Frequency
 import edu.cuhk.csci3310.data.FrequencyUnit
@@ -13,12 +16,15 @@ import edu.cuhk.csci3310.data.Habit
 import edu.cuhk.csci3310.data.HabitDao
 import edu.cuhk.csci3310.data.Record
 import edu.cuhk.csci3310.data.RecordStatus
+import edu.cuhk.csci3310.notifications.DailyNotificationService
+import edu.cuhk.csci3310.notifications.DelayedNotificationWorker
 import edu.cuhk.csci3310.ui.formUtils.TextInputInfo
 import edu.cuhk.csci3310.ui.utils.Calculations.calculateNextDay
 import io.github.serpro69.kfaker.Faker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.lang.NumberFormatException
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlin.random.Random
@@ -35,10 +41,12 @@ class DebugScreenViewModel
     constructor(
         private val habitDao: HabitDao,
         private val groupDao: GroupDao,
-    ) : ViewModel() {
+        application: Application,
+    ) : AndroidViewModel(application) {
         private val faker = Faker()
         private val now: LocalDate = LocalDate.now()
         private val rand = Random.Default
+        private val service = DailyNotificationService(application)
 
         private val _habitAmount =
             MutableStateFlow(
@@ -98,36 +106,42 @@ class DebugScreenViewModel
 
         fun addHabits() {
             viewModelScope.launch {
-                repeat(_habitAmount.value.value.toInt()) {
-                    val freq =
-                        Frequency(
-                            times = rand.nextInt(from = 1, until = 10),
-                            unit = FrequencyUnit.MONTHLY,
+                try {
+                    repeat(_habitAmount.value.value.toInt()) {
+                        val freq =
+                            Frequency(
+                                times = rand.nextInt(from = 1, until = 10),
+                                unit = FrequencyUnit.MONTHLY,
+                            )
+                        habitDao.insertHabit(
+                            Habit(
+                                description = faker.lorem.words(),
+                                title = faker.lorem.words(),
+                                frequency = freq,
+                                positive = listOf(false, true).random(),
+                                until = generateRandomDate(),
+                                nextTime = calculateNextDay(freq),
+                            ),
                         )
-                    habitDao.insertHabit(
-                        Habit(
-                            description = faker.lorem.words(),
-                            title = faker.lorem.words(),
-                            frequency = freq,
-                            positive = listOf(false, true).random(),
-                            until = generateRandomDate(),
-                            nextTime = calculateNextDay(freq),
-                        ),
-                    )
+                    }
+                } catch (_: NumberFormatException) {
                 }
             }
         }
 
         fun addGroups() {
             viewModelScope.launch {
-                repeat(_groupAmount.value.value.toInt()) {
-                    groupDao.insertGroup(
-                        Group(
-                            description = faker.lorem.words(),
-                            name = faker.lorem.words(),
-                            colour = Color(rand.nextLong()).toArgb(),
-                        ),
-                    )
+                try {
+                    repeat(_groupAmount.value.value.toInt()) {
+                        groupDao.insertGroup(
+                            Group(
+                                description = faker.lorem.words(),
+                                name = faker.lorem.words(),
+                                colour = Color(rand.nextLong()).toArgb(),
+                            ),
+                        )
+                    }
+                } catch (_: NumberFormatException) {
                 }
             }
         }
@@ -135,22 +149,25 @@ class DebugScreenViewModel
         fun addRecords() {
             viewModelScope.launch {
                 val habitIds = habitDao.getAllHabitIds()
-                repeat(_recordAmount.value.value.toInt()) {
-                    habitDao.addRecord(
-                        Record(
-                            status =
-                                when (rand.nextInt(from = 1, until = 4)) {
-                                    1 -> RecordStatus.FULFILLED
-                                    2 -> RecordStatus.UNFULFILLED
-                                    3 -> RecordStatus.SKIPPED
-                                    else -> RecordStatus.NOTFILLED
-                                },
-                            date = generateRandomDate(),
-                            habitId = habitIds.random(),
-                            recordId = null,
-                            reason = null,
-                        ),
-                    )
+                try {
+                    repeat(_recordAmount.value.value.toInt()) {
+                        habitDao.addRecord(
+                            Record(
+                                status =
+                                    when (rand.nextInt(from = 1, until = 4)) {
+                                        1 -> RecordStatus.FULFILLED
+                                        2 -> RecordStatus.UNFULFILLED
+                                        3 -> RecordStatus.SKIPPED
+                                        else -> RecordStatus.NOTFILLED
+                                    },
+                                date = generateRandomDate(),
+                                habitId = habitIds.random(),
+                                recordId = null,
+                                reason = null,
+                            ),
+                        )
+                    }
+                } catch (_: NumberFormatException) {
                 }
             }
         }
@@ -170,6 +187,27 @@ class DebugScreenViewModel
         fun removeAllRecord() {
             viewModelScope.launch {
                 habitDao.deleteAllRecords()
+            }
+        }
+
+        fun showTestNotification() {
+            service.showNotification(listOf("Test Habit"))
+        }
+
+        fun showDailyNotification() {
+            viewModelScope.launch {
+                val names = habitDao.getTitlesOfPendingHabits()
+                service.showNotification(names)
+            }
+        }
+
+        fun scheduleNotification() {
+            viewModelScope.launch {
+                val names = habitDao.getTitlesOfPendingHabits()
+                // hardcoded 10 seconds of delay for testing
+                val request = DelayedNotificationWorker.buildWorkerRequest(names, 10)
+                WorkManager.getInstance(getApplication<Application>().applicationContext)
+                    .enqueueUniqueWork(DelayedNotificationWorker.WORK_TAG, ExistingWorkPolicy.REPLACE, request)
             }
         }
 

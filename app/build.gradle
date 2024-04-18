@@ -102,4 +102,8 @@ dependencies {
 
     // Random Data Generator for Debug Screen
     implementation 'io.github.serpro69:kotlin-faker:1.6.0'
+
+    // work manager api
+    def work_version = "2.9.0"
+    implementation "androidx.work:work-runtime-ktx:$work_version"
 }
