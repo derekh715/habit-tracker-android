@@ -109,4 +109,8 @@ dependencies {
 
     // user preferences
     implementation "androidx.datastore:datastore-preferences:1.1.0"
+
+    // github-like heatmap calendar
+    implementation 'com.kizitonwose.calendar:compose:2.5.0'
+
 }

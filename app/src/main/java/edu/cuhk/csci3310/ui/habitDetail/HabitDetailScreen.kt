@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
+import edu.cuhk.csci3310.ui.habitDetail.customHeatmap.MyHeatMapCalendar
 import edu.cuhk.csci3310.ui.utils.FetchStatus
 
 @Composable
@@ -33,8 +34,7 @@ fun HabitDetailScreen(viewModel: HabitDetailViewModel = hiltViewModel()) {
 
     val state = rememberUseCaseState(visible = false)
     LaunchedEffect(key1 = true, block = {
-        viewModel.uiChannel.collect {
-                event ->
+        viewModel.uiChannel.collect { event ->
             when (event) {
                 is HabitDetailScreenUiEvent.ShowAddToGroupDialog -> {
                     state.show()
@@ -52,7 +52,10 @@ fun HabitDetailScreen(viewModel: HabitDetailViewModel = hiltViewModel()) {
             val habit = item.value
             habit?.let {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text(habit.title, fontSize = 48.sp, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(8.dp))
                         Text(habit.description ?: "No Description Provided", fontSize = 24.sp)
@@ -66,10 +69,14 @@ fun HabitDetailScreen(viewModel: HabitDetailViewModel = hiltViewModel()) {
                         )
                         Spacer(modifier = Modifier.height(36.dp))
                         LazyRow {
-                            itemsIndexed(records.value) {
-                                    index, rec ->
+                            itemsIndexed(records.value) { index, rec ->
                                 ToggleableDayEntry(record = rec, changeStatus = {
-                                    viewModel.onEvent(HabitDetailEvent.ChangeRecord(index = index, newStatus = it))
+                                    viewModel.onEvent(
+                                        HabitDetailEvent.ChangeRecord(
+                                            index = index,
+                                            newStatus = it
+                                        )
+                                    )
                                 })
                             }
                         }
@@ -93,22 +100,29 @@ fun HabitDetailScreen(viewModel: HabitDetailViewModel = hiltViewModel()) {
                                 viewModel.onEvent(HabitDetailEvent.AddToGroupDialog)
                             },
                             onSelect = { newlyAdded, newlyRemoved ->
-                                viewModel.onEvent(HabitDetailEvent.AddToGroup(newlyAdded, newlyRemoved))
+                                viewModel.onEvent(
+                                    HabitDetailEvent.AddToGroup(
+                                        newlyAdded,
+                                        newlyRemoved
+                                    )
+                                )
                             },
                             listOptions = groups.value,
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Column {
-                        // TODO: commit graph
+                        MyHeatMapCalendar()
                     }
                 }
             }
         }
+
         FetchStatus.NOT_EXISTS, FetchStatus.ERROR -> {
             // TODO: better error handling
             Text("This item cannot be fetched from the database")
         }
+
         FetchStatus.FETCHING -> {
             // TODO: loading indicators
             Text("Fetching...")
