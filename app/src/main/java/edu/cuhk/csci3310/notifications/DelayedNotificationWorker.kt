@@ -10,18 +10,19 @@ import java.time.Duration
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
-class DelayedNotificationWorker(private val appContext: Context, workerParameters: WorkerParameters) : Worker(
+class DelayedNotificationWorker(
+    private val appContext: Context,
+    workerParameters: WorkerParameters
+) : Worker(
     appContext,
     workerParameters,
 ) {
     companion object {
         const val NAMES_KEY = "names"
-        const val SEPARATOR = "\t"
         const val WORK_TAG = "daily_reminder"
 
-        fun calculateDelay(): Long {
-            val target = LocalTime.of(16, 18)
-            val d = Duration.between(LocalTime.now(), target)
+        fun calculateDelay(time: LocalTime = LocalTime.of(16, 18)): Long {
+            val d = Duration.between(LocalTime.now(), time)
             return if (d.isNegative) {
                 0
             } else {

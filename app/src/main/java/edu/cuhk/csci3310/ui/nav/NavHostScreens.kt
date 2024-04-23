@@ -9,7 +9,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import edu.cuhk.csci3310.ui.addGroup.AddGroupScreen
 import edu.cuhk.csci3310.ui.addHabit.AddHabitScreen
-import edu.cuhk.csci3310.ui.debug.DebugScreen
+import edu.cuhk.csci3310.ui.settings.SettingsScreen
 import edu.cuhk.csci3310.ui.groupList.GroupListScreen
 import edu.cuhk.csci3310.ui.habitDetail.HabitDetailScreen
 import edu.cuhk.csci3310.ui.habitList.HabitListScreen
@@ -56,9 +56,9 @@ fun NavHostScreens(navController: NavHostController) {
         }
 
         composable(
-            route = Screen.Debug.route,
+            route = Screen.Settings.route,
         ) {
-            DebugScreen()
+            SettingsScreen()
         }
     }
 }

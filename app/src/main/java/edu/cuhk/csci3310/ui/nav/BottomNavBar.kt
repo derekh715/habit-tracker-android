@@ -43,7 +43,7 @@ fun BottomNavBar(navController: NavController) {
                 unselectedIcon = Icons.Outlined.Settings,
             ),
             BottomNavBarItemData(
-                route = Screen.Debug.route,
+                route = Screen.Settings.route,
                 name = "Debug",
                 selectedIcon = Icons.Filled.Build,
                 unselectedIcon = Icons.Outlined.Build,

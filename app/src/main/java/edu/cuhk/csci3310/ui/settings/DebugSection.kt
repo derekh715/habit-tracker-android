@@ -1,20 +1,35 @@
-package edu.cuhk.csci3310.ui.debug
+package edu.cuhk.csci3310.ui.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import edu.cuhk.csci3310.ui.formUtils.MyTextField
 
 @Composable
-fun DebugScreen(viewModel: DebugScreenViewModel = hiltViewModel()) {
+fun DebugSection(viewModel: DebugSectionViewModel = hiltViewModel()) {
+    if (!viewModel.showDebugOptions.collectAsState().value) {
+        return Column {
+
+        }
+    }
+
     val hAmount = viewModel.habitAmount.collectAsState()
     val gAmount = viewModel.groupAmount.collectAsState()
     val rAmount = viewModel.recordAmount.collectAsState()
 
     Column {
+        Text(
+            text = "Debug Section",
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
         MyTextField(info = hAmount.value, onValueChange = {
             viewModel.valueChanged(it, TextInputEnum.Habit)
         })

@@ -1,10 +1,12 @@
 package edu.cuhk.csci3310.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import edu.cuhk.csci3310.data.AppDatabase
 import edu.cuhk.csci3310.data.GroupDao
@@ -31,4 +33,9 @@ class AppModule {
     fun provideGroupDao(db: AppDatabase): GroupDao {
         return db.groupDao
     }
+
+    @Provides
+    @Singleton
+    fun dataStoreManager(@ApplicationContext appContext: Context): DataStoreManager =
+        DataStoreManager(appContext)
 }
