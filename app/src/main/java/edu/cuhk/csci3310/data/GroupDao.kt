@@ -17,6 +17,9 @@ interface GroupDao {
     @Query("SELECT * FROM `group`")
     fun getGroups(): Flow<List<Group>>
 
+    @Query("SELECT * FROM `group` WHERE groupId = :groupId")
+    fun getGroup(groupId: Long): Flow<Group?>
+
     @Upsert
     suspend fun addHabitIntoGroup(pair: HabitGroupCrossRef)
 

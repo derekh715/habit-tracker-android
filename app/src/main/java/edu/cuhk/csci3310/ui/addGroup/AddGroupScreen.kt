@@ -17,6 +17,7 @@ fun AddGroupScreen(viewModel: AddGroupViewModel = hiltViewModel(), navController
     val name = viewModel.name.collectAsState()
     val description = viewModel.description.collectAsState()
     val colour = viewModel.colour.collectAsState()
+    val id = viewModel.prefilledId.collectAsState().value
 
     LaunchedEffect(key1 = true, block = {
         viewModel.uiChannel.collect { event ->
@@ -43,7 +44,13 @@ fun AddGroupScreen(viewModel: AddGroupViewModel = hiltViewModel(), navController
                 AddGroupEvent.AddGroup,
             )
         }) {
-            Text("Add Group")
+            Text(
+                if (id != null) {
+                    "Change Group"
+                } else {
+                    "Add Group"
+                }
+            )
         }
     }
 }

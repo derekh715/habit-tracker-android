@@ -50,7 +50,15 @@ fun NavHostScreens(navController: NavHostController) {
             composable(route = Screen.GroupList.route) {
                 GroupListScreen(navController = navController)
             }
-            composable(route = Screen.AddGroup.route) {
+            composable(route = Screen.AddGroup.route + "?groupId={groupId}",
+                arguments =
+                listOf(
+                    navArgument(name = "groupId") {
+                        type = NavType.LongType
+                        defaultValue = -1
+                    }
+                )
+            ) {
                 AddGroupScreen(navController = navController)
             }
         }
