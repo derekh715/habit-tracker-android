@@ -1,6 +1,7 @@
 package edu.cuhk.csci3310.ui.settings
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingWorkPolicy
@@ -81,6 +82,8 @@ class UserSectionViewModel @Inject constructor(
 
     fun <T> setValue(key: KeyDefaultValue<T>, value: T) {
         viewModelScope.launch {
+            Log.i("PUB", key.toString())
+            Log.i("PUB", value.toString())
             dataStoreManager.setValue(key, value)
         }
     }

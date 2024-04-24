@@ -19,8 +19,7 @@ fun GroupList(
 ) {
     val list = groupList.entries.toList()
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
-        items(list) {
-                group ->
+        items(list) { group ->
             Column(modifier = Modifier.padding(vertical = 16.dp)) {
                 Text(text = group.key, fontSize = 24.sp, modifier = Modifier.padding(bottom = 8.dp))
                 Column {

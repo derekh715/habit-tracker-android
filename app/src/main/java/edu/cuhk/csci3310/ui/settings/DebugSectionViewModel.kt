@@ -46,7 +46,7 @@ constructor(
     private val dataStoreManager: DataStoreManager,
     application: Application,
 ) : AndroidViewModel(application) {
-    private val faker = Faker()
+    private var faker: Faker? = null
     private val now: LocalDate = LocalDate.now()
     private val rand = Random.Default
     private val service = DailyNotificationService(application)
@@ -57,68 +57,34 @@ constructor(
         initialValue = false
     )
 
-    private val _habitAmount =
+    private val _amount =
         MutableStateFlow(
             TextInputInfo(
                 isNumberInput = true,
-                label = "Habit Amount",
+                label = "Amount",
             ),
         )
-    val habitAmount = _habitAmount.asStateFlow()
-    private val _groupAmount =
-        MutableStateFlow(
-            TextInputInfo(
-                isNumberInput = true,
-                label = "Group Amount",
-            ),
-        )
-    val groupAmount = _groupAmount.asStateFlow()
-    private val _recordAmount =
-        MutableStateFlow(
-            TextInputInfo(
-                isNumberInput = true,
-                label = "Record Amount",
-            ),
-        )
-    val recordAmount = _recordAmount.asStateFlow()
+    val amount = _amount.asStateFlow()
 
     fun valueChanged(
         value: String,
-        which: TextInputEnum,
     ) {
         viewModelScope.launch {
-            when (which) {
-                TextInputEnum.Habit -> {
-                    _habitAmount.emit(
-                        _habitAmount.value.copy(
-                            value = value,
-                        ),
-                    )
-                }
-
-                TextInputEnum.Group -> {
-                    _groupAmount.emit(
-                        _groupAmount.value.copy(
-                            value = value,
-                        ),
-                    )
-                }
-
-                TextInputEnum.Record -> {
-                    _recordAmount.emit(
-                        _recordAmount.value.copy(
-                            value = value,
-                        ),
-                    )
-                }
-            }
+            _amount.emit(
+                _amount.value.copy(
+                    value = value,
+                ),
+            )
         }
     }
 
     fun addHabits() {
         viewModelScope.launch {
             try {
-                repeat(_habitAmount.value.value.toInt()) {
+                if (faker == null) {
+                    faker = Faker()
+                }
+                repeat(_amount.value.value.toInt()) {
                     val freq =
                         Frequency(
                             times = rand.nextInt(from = 1, until = 10),
@@ -126,8 +92,8 @@ constructor(
                         )
                     habitDao.insertHabit(
                         Habit(
-                            description = faker.lorem.words(),
-                            title = faker.lorem.words(),
+                            description = faker!!.lorem.words(),
+                            title = faker!!.lorem.words(),
                             frequency = freq,
                             positive = listOf(false, true).random(),
                             until = generateRandomDate(),
@@ -143,11 +109,14 @@ constructor(
     fun addGroups() {
         viewModelScope.launch {
             try {
-                repeat(_groupAmount.value.value.toInt()) {
+                if (faker == null) {
+                    faker = Faker()
+                }
+                repeat(_amount.value.value.toInt()) {
                     groupDao.insertGroup(
                         Group(
-                            description = faker.lorem.words(),
-                            name = faker.lorem.words(),
+                            description = faker!!.lorem.words(),
+                            name = faker!!.lorem.words(),
                             colour = Color(rand.nextLong()).toArgb(),
                         ),
                     )
@@ -161,7 +130,7 @@ constructor(
         viewModelScope.launch {
             val habitIds = habitDao.getAllHabitIds()
             try {
-                repeat(_recordAmount.value.value.toInt()) {
+                repeat(_amount.value.value.toInt()) {
                     habitDao.addRecord(
                         Record(
                             status =

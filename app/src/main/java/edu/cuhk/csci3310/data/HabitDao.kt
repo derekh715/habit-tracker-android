@@ -15,12 +15,6 @@ data class GroupListOption(
     var selected: Boolean,
 )
 
-data class HabitAndGroup(
-    @Embedded
-    val habit: Habit,
-    val groupName: String,
-)
-
 @Dao
 interface HabitDao {
     @Upsert
@@ -30,16 +24,16 @@ interface HabitDao {
     suspend fun deleteHabit(habit: Habit)
 
     @Query("SELECT * FROM habit WHERE habitId = :habitId")
-    suspend fun getHabitById(habitId: Long): Habit
+    fun getHabitById(habitId: Long): Flow<Habit>
 
     @Query("SELECT * FROM habit")
     fun getHabitsOnly(): Flow<List<Habit>>
 
     @Query("SELECT * FROM record WHERE habitId = :habitId AND date >= :notBefore ORDER BY date DESC")
-    suspend fun getRecordsOfHabit(
+    fun getRecordsOfHabit(
         habitId: Long,
         notBefore: LocalDate,
-    ): List<Record>
+    ): Flow<List<Record>>
 
     // long returns the record id
     @Upsert
@@ -50,32 +44,34 @@ interface HabitDao {
 
     @Query(
         "SELECT g.* FROM habit_group_cross_ref hg INNER JOIN `group` g ON g.groupId = hg.groupId " +
-            "INNER JOIN habit h ON h.habitId = hg.habitId WHERE hg.habitId = :habitId",
+                "INNER JOIN habit h ON h.habitId = hg.habitId WHERE hg.habitId = :habitId",
     )
     fun getGroupsOfHabit(habitId: Long): Flow<List<Group>>
 
     @Query(
         "SELECT h.*, g.name as groupName FROM habit_group_cross_ref hg " +
-            "INNER JOIN habit h ON hg.habitId = h.habitId " +
-            "INNER JOIN `group` g ON hg.groupId = g.groupId" +
-            " UNION SELECT h.*, 'No Group' as groupName FROM habit h " +
-            "WHERE h.habitId NOT IN (SELECT habitId FROM habit_group_cross_ref) ",
+                "INNER JOIN habit h ON hg.habitId = h.habitId " +
+                "INNER JOIN `group` g ON hg.groupId = g.groupId" +
+                " UNION SELECT h.*, 'No Group' as groupName FROM habit h " +
+                "WHERE h.habitId NOT IN (SELECT habitId FROM habit_group_cross_ref) ",
     )
     fun getAllHabitsWithGroups(): Flow<
-        Map<
-            @MapColumn(columnName = "groupName")
-            String,
-            List<Habit>,
-        >,
-    >
+            Map<
+                    @MapColumn(columnName = "groupName")
+                    String,
+                    List<Habit>,
+                    >,
+            >
 
     @Query(
         "SELECT g.*, (SELECT COUNT(*)" +
-            " FROM habit_group_cross_ref hg WHERE g.groupId = hg.groupId AND :habitId = hg.habitId)" +
-            " as selected FROM `group` g",
+                " FROM habit_group_cross_ref hg WHERE g.groupId = hg.groupId AND :habitId = hg.habitId)" +
+                " as selected FROM `group` g",
     )
-    suspend fun getAllGroupsWithIsInGroupOrNot(habitId: Long): List<GroupListOption>
+    fun getAllGroupsWithIsInGroupOrNot(habitId: Long): Flow<List<GroupListOption>>
 
+    // this is for the debug section
+    // no need to convert to state
     @Query("SELECT habitId FROM habit")
     suspend fun getAllHabitIds(): List<Long>
 

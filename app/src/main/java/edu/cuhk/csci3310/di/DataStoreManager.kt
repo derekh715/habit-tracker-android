@@ -26,8 +26,8 @@ class DataStoreManager(appContext: Context) {
     private val settingsDataStore = appContext.dataStore
 
     suspend fun <T> setValue(key: KeyDefaultValue<T>, value: T) {
-        settingsDataStore.edit { settings ->
-            settings[key.first] = value
+        settingsDataStore.edit { preferences ->
+            preferences[key.first] = value
         }
     }
 

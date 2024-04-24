@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 enum class Level(val color: Color) {
+    Negative(Color(0xFFEF4444)),
+    Skipped(Color(0xFFFDE047)),
     Zero(Color(0xFFEBEDF0)),
     One(Color(0xFF9BE9A8)),
     Two(Color(0xFF40C463)),

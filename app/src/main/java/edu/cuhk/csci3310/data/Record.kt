@@ -2,6 +2,7 @@ package edu.cuhk.csci3310.data
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.PrimaryKey
 import java.time.LocalDate
 
@@ -19,7 +20,7 @@ enum class RecordStatus {
             entity = Habit::class,
             parentColumns = arrayOf("habitId"),
             childColumns = arrayOf("habitId"),
-            onDelete = ForeignKey.CASCADE,
+            onDelete = CASCADE,
         ),
     ],
 )

@@ -1,6 +1,9 @@
 package edu.cuhk.csci3310.ui.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -19,55 +22,69 @@ fun DebugSection(viewModel: DebugSectionViewModel = hiltViewModel()) {
 
         }
     }
-
-    val hAmount = viewModel.habitAmount.collectAsState()
-    val gAmount = viewModel.groupAmount.collectAsState()
-    val rAmount = viewModel.recordAmount.collectAsState()
-
+    val amount = viewModel.amount.collectAsState()
     Column {
         Text(
             text = "Debug Section",
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(vertical = 8.dp)
         )
-        MyTextField(info = hAmount.value, onValueChange = {
-            viewModel.valueChanged(it, TextInputEnum.Habit)
+        MyTextField(info = amount.value, onValueChange = {
+            viewModel.valueChanged(it)
         })
-        Button(onClick = {
-            viewModel.addHabits()
-        }) {
-            Text("Add dummy habit(s)")
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = {
+                viewModel.addHabits()
+            }) {
+                Text("Add dummy habit(s)")
+            }
+            Button(onClick = {
+                viewModel.addGroups()
+            }) {
+                Text("Add dummy group(s)")
+            }
+            Button(onClick = {
+                viewModel.addRecords()
+            }) {
+                Text("Add dummy record(s)")
+            }
         }
-        MyTextField(info = gAmount.value, onValueChange = {
-            viewModel.valueChanged(it, TextInputEnum.Group)
-        })
-        Button(onClick = {
-            viewModel.addGroups()
-        }) {
-            Text("Add dummy group(s)")
+        Text(text = "Notifications")
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = {
+                viewModel.showTestNotification()
+            }) {
+                Text("Show Test Notification")
+            }
+            Button(onClick = {
+                viewModel.showDailyNotification()
+            }) {
+                Text("Show Daily Notification")
+            }
+            Button(onClick = {
+                viewModel.scheduleNotification()
+            }) {
+                Text("Schedule Test Notification")
+            }
         }
-        MyTextField(info = rAmount.value, onValueChange = {
-            viewModel.valueChanged(it, TextInputEnum.Record)
-        })
-        Button(onClick = {
-            viewModel.addRecords()
-        }) {
-            Text("Add dummy record(s)")
+        Text(text = "Remove")
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = {
+                viewModel.removeAllHabits()
+            }) {
+                Text("Remove All Habits")
+            }
+            Button(onClick = {
+                viewModel.removeAllGroups()
+            }) {
+                Text("Remove All Groups")
+            }
+            Button(onClick = {
+                viewModel.removeAllRecord()
+            }) {
+                Text("Remove All Records")
+            }
         }
-        Button(onClick = {
-            viewModel.showTestNotification()
-        }) {
-            Text("Show Test Notification")
-        }
-        Button(onClick = {
-            viewModel.showDailyNotification()
-        }) {
-            Text("Show Daily Notification")
-        }
-        Button(onClick = {
-            viewModel.scheduleNotification()
-        }) {
-            Text("Schedule Test Notification")
-        }
+
     }
 }
