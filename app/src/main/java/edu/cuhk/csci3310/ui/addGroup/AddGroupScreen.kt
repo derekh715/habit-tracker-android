@@ -4,16 +4,29 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import edu.cuhk.csci3310.ui.formUtils.MyColourPicker
 import edu.cuhk.csci3310.ui.formUtils.MyTextField
+import edu.cuhk.csci3310.ui.utils.CommonUiEvent
 
 @Composable
-fun AddGroupScreen(viewModel: AddGroupViewModel = hiltViewModel()) {
+fun AddGroupScreen(viewModel: AddGroupViewModel = hiltViewModel(), navController: NavController) {
     val name = viewModel.name.collectAsState()
     val description = viewModel.description.collectAsState()
     val colour = viewModel.colour.collectAsState()
+
+    LaunchedEffect(key1 = true, block = {
+        viewModel.uiChannel.collect { event ->
+            when (event) {
+                is CommonUiEvent.Navigate -> {
+                    navController.popBackStack()
+                }
+            }
+        }
+    })
 
     Column {
         MyTextField(

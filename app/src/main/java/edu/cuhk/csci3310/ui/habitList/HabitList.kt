@@ -17,16 +17,17 @@ fun HabitList(
 ) {
     LazyColumn(
         modifier =
-            modifier
-                .fillMaxWidth(),
+        modifier
+            .fillMaxWidth(),
     ) {
-        items(habits) {
-                habit ->
+        items(habits) { habit ->
             HabitItem(
                 habit = habit,
                 deleteHabit = deleteHabit,
                 modifier =
-                    Modifier.clickable { habitDetail(habit) },
+                Modifier
+                    .clickable { habitDetail(habit) }
+                    .fillMaxWidth(),
             )
         }
     }

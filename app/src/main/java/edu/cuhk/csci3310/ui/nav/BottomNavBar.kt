@@ -42,12 +42,6 @@ fun BottomNavBar(navController: NavController) {
                 selectedIcon = Icons.Filled.Settings,
                 unselectedIcon = Icons.Outlined.Settings,
             ),
-            BottomNavBarItemData(
-                route = Screen.Settings.route,
-                name = "Debug",
-                selectedIcon = Icons.Filled.Build,
-                unselectedIcon = Icons.Outlined.Build,
-            ),
         )
     NavigationBar {
         val navBackstackEntry by navController.currentBackStackEntryAsState()

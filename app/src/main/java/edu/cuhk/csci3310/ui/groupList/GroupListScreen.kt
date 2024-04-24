@@ -30,16 +30,21 @@ fun GroupListScreen(
         modifier = Modifier.fillMaxSize(),
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxWidth().weight(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
         ) {
-            items(groups.value) {
-                    group ->
-                GroupItem(group = group, deleteGroup = { viewModel.onEvent(GroupListEvent.RemoveGroup(it)) })
+            items(groups.value) { group ->
+                GroupItem(
+                    group = group,
+                    deleteGroup = { viewModel.onEvent(GroupListEvent.RemoveGroup(it)) })
             }
         }
         Button(onClick = {
             navController.navigate(Screen.AddGroup.route)
-        }, modifier = Modifier.align(Alignment.End).padding(end = 8.dp, bottom = 8.dp)) {
+        }, modifier = Modifier
+            .align(Alignment.End)
+            .padding(end = 8.dp, bottom = 8.dp)) {
             Icon(Icons.Filled.Add, contentDescription = "Add New Group")
             Text(text = "Add New Group")
         }

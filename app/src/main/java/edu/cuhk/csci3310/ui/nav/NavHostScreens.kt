@@ -9,10 +9,10 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import edu.cuhk.csci3310.ui.addGroup.AddGroupScreen
 import edu.cuhk.csci3310.ui.addHabit.AddHabitScreen
-import edu.cuhk.csci3310.ui.settings.SettingsScreen
 import edu.cuhk.csci3310.ui.groupList.GroupListScreen
 import edu.cuhk.csci3310.ui.habitDetail.HabitDetailScreen
 import edu.cuhk.csci3310.ui.habitList.HabitListScreen
+import edu.cuhk.csci3310.ui.settings.SettingsScreen
 
 @Composable
 fun NavHostScreens(navController: NavHostController) {
@@ -27,17 +27,17 @@ fun NavHostScreens(navController: NavHostController) {
                 })
             }
             composable(route = Screen.AddHabit.route) {
-                AddHabitScreen()
+                AddHabitScreen(navController = navController)
             }
             composable(
                 route = Screen.HabitDetail.route + "?habitId={habitId}",
                 arguments =
-                    listOf(
-                        navArgument(name = "habitId") {
-                            type = NavType.LongType
-                            defaultValue = -1
-                        },
-                    ),
+                listOf(
+                    navArgument(name = "habitId") {
+                        type = NavType.LongType
+                        defaultValue = -1
+                    },
+                ),
             ) {
                 HabitDetailScreen()
             }
@@ -51,7 +51,7 @@ fun NavHostScreens(navController: NavHostController) {
                 GroupListScreen(navController = navController)
             }
             composable(route = Screen.AddGroup.route) {
-                AddGroupScreen()
+                AddGroupScreen(navController = navController)
             }
         }
 
