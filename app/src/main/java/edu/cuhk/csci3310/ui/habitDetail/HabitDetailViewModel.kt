@@ -10,10 +10,13 @@ import edu.cuhk.csci3310.data.HabitGroupCrossRef
 import edu.cuhk.csci3310.data.Record
 import edu.cuhk.csci3310.data.RecordStatus
 import edu.cuhk.csci3310.ui.habitDetail.customHeatmap.Level
+import edu.cuhk.csci3310.ui.nav.Screen
+import edu.cuhk.csci3310.ui.utils.CommonUiEvent
 import edu.cuhk.csci3310.ui.utils.UiEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -90,7 +93,7 @@ constructor(
         initialValue = listOf()
     )
 
-    val heatMap = _records.map {
+    val heatMap: StateFlow<Map<LocalDate, Level>> = _records.map {
         val map = mutableMapOf<LocalDate, Level>()
         it.forEach { r ->
             map[r.date] = when (r.status) {
@@ -152,7 +155,15 @@ constructor(
             is HabitDetailEvent.ChangeRecord -> {
                 recordStatusChange(event)
             }
+
+            is HabitDetailEvent.ChangeHabit -> {
+                changeHabit(event)
+            }
         }
+    }
+
+    private fun changeHabit(event: HabitDetailEvent.ChangeHabit) {
+        sendEvent(CommonUiEvent.Navigate(Screen.AddHabit.route + "?habitId=${event.habit.habitId}"))
     }
 
     private fun recordStatusChange(event: HabitDetailEvent.ChangeRecord) {
@@ -169,7 +180,7 @@ constructor(
         }
     }
 
-    private fun sendEvent(event: HabitDetailScreenUiEvent) {
+    private fun sendEvent(event: UiEvent) {
         viewModelScope.launch {
             _uiChannel.send(event)
         }

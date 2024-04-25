@@ -3,6 +3,7 @@ package edu.cuhk.csci3310.ui.addHabit
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Task
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,95 +17,146 @@ import edu.cuhk.csci3310.ui.nav.Screen
 import edu.cuhk.csci3310.ui.utils.Calculations.calculateNextDay
 import edu.cuhk.csci3310.ui.utils.CommonUiEvent
 import edu.cuhk.csci3310.ui.utils.UiEvent
+import edu.cuhk.csci3310.ui.utils.mutableStateIn
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class AddHabitViewModel
 @Inject
 constructor(
     private val habitDao: HabitDao,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _uiChannel = Channel<UiEvent>()
     val uiChannel = _uiChannel.receiveAsFlow()
-    private val _title =
-        MutableStateFlow(
-            TextInputInfo(
-                value = "Test",
-                label = "Habit Name",
-                placeholder = "Drink milk every day",
-                icon = Icons.Filled.Task,
-            ),
+
+    private val prefilledHabit = flow<Long> {
+        emit(savedStateHandle.get(key = "habitId") ?: -1)
+    }.flatMapLatest { id -> habitDao.getHabitById(id) }
+
+    private fun titleInputInfo(habit: Habit?): TextInputInfo {
+        return TextInputInfo(
+            value = habit?.title ?: "",
+            label = "Habit Name",
+            placeholder = "Drink milk every day",
+            icon = Icons.Filled.Task,
         )
+    }
+
+
+    private val _title = prefilledHabit.map {
+        titleInputInfo(it)
+    }.mutableStateIn(
+        scope = viewModelScope,
+        initialValue = titleInputInfo(null)
+    )
     val title = _title.asStateFlow()
-    private val _description =
-        MutableStateFlow(
-            TextInputInfo(
-                value = "Test Description",
-                icon = Icons.Filled.Description,
-                label = "Description",
-                placeholder =
-                "It is a simple habit",
-            ),
+
+    private fun descriptionInputInfo(habit: Habit?): TextInputInfo {
+        return TextInputInfo(
+            value = habit?.description ?: "",
+            icon = Icons.Filled.Description,
+            label = "Description",
+            placeholder =
+            "It is a simple habit",
         )
+    }
+
+    private val _description = prefilledHabit.map {
+        descriptionInputInfo(it)
+    }.mutableStateIn(
+        scope = viewModelScope,
+        initialValue = descriptionInputInfo(null)
+    )
     val description = _description.asStateFlow()
 
-    private val _polarities =
-        MutableStateFlow(
-            listOf(
-                ToggleableInfo(
-                    text = "Positive",
-                    toggled = true,
-                ),
-                ToggleableInfo(
-                    text = "Negative",
-                    toggled = false,
-                ),
+    private fun polaritiesInfo(habit: Habit?): List<ToggleableInfo> {
+        val isPositive = habit?.positive ?: false
+        return listOf(
+            ToggleableInfo(
+                text = "Positive",
+                toggled = isPositive,
+            ),
+            ToggleableInfo(
+                text = "Negative",
+                toggled = !isPositive,
             ),
         )
+    }
+
+    private val _polarities = prefilledHabit.map {
+        polaritiesInfo(it)
+    }.mutableStateIn(
+        scope = viewModelScope,
+        initialValue = polaritiesInfo(null)
+    )
     val polarities = _polarities.asStateFlow()
 
-    private val _options =
-        MutableStateFlow(
-            listOf(
-                ToggleableInfo(
-                    text = "Daily",
-                    toggled = false,
-                ),
-                ToggleableInfo(
-                    text = "Weekly",
-                    toggled = true,
-                ),
-                ToggleableInfo(
-                    text = "Monthly",
-                    toggled = false,
-                ),
-                ToggleableInfo(
-                    text = "Yearly",
-                    toggled = false,
-                ),
+    private fun optionsInfo(habit: Habit?): List<ToggleableInfo> {
+        val unit = habit?.frequency?.unit
+        return listOf(
+            ToggleableInfo(
+                text = "Daily",
+                toggled = if (unit != null) {
+                    unit == FrequencyUnit.DAILY
+                } else {
+                    true
+                },
+            ),
+            ToggleableInfo(
+                text = "Weekly",
+                toggled = unit == FrequencyUnit.WEEKLY,
+            ),
+            ToggleableInfo(
+                text = "Monthly",
+                toggled = unit == FrequencyUnit.MONTHLY,
+            ),
+            ToggleableInfo(
+                text = "Yearly",
+                toggled = unit == FrequencyUnit.YEARLY,
             ),
         )
+    }
+
+    private val _options = prefilledHabit.map {
+        optionsInfo(it)
+    }.mutableStateIn(
+        scope = viewModelScope,
+        initialValue = optionsInfo(null)
+    )
     val options = _options.asStateFlow()
 
-    private val _until = MutableStateFlow(LocalDate.now())
+    private val _until = prefilledHabit.map {
+        it.until
+    }.mutableStateIn(
+        scope = viewModelScope,
+        initialValue = LocalDate.now()
+    )
     val until = _until.asStateFlow()
 
-    private val _times =
-        MutableStateFlow(
-            TextInputInfo(
-                value = "1",
-                icon = Icons.Filled.Description,
-                label = "Times",
-                isNumberInput = true,
-                helperMessage = "Daily can only be once.",
-            ),
+    private fun timesInfo(habit: Habit?): TextInputInfo {
+        return TextInputInfo(
+            value = habit?.frequency?.times?.toString() ?: "1",
+            icon = Icons.Filled.Description,
+            label = "Times",
+            isNumberInput = true,
+            helperMessage = "Daily can only be once.",
         )
+    }
+
+    private val _times = prefilledHabit.map {
+        timesInfo(it)
+    }.mutableStateIn(scope = viewModelScope, initialValue = timesInfo(null))
     val times = _times.asStateFlow()
 
     fun changeName(newName: String) {
@@ -217,9 +269,9 @@ constructor(
         }
     }
 
-    private fun sendEvent(event: UiEvent) {
-        viewModelScope.launch {
-            _uiChannel.send(event)
-        }
-    }
+//    private fun sendEvent(event: UiEvent) {
+//        viewModelScope.launch {
+//            _uiChannel.send(event)
+//        }
+//    }
 }

@@ -26,7 +26,15 @@ fun NavHostScreens(navController: NavHostController) {
                     navController.navigate(it.route)
                 })
             }
-            composable(route = Screen.AddHabit.route) {
+            composable(route = Screen.AddHabit.route + "?habitId={habitId}",
+                arguments =
+                listOf(
+                    navArgument(name = "habitId") {
+                        type = NavType.LongType
+                        defaultValue = -1
+                    }
+                )
+            ) {
                 AddHabitScreen(navController = navController)
             }
             composable(
@@ -39,7 +47,7 @@ fun NavHostScreens(navController: NavHostController) {
                     },
                 ),
             ) {
-                HabitDetailScreen()
+                HabitDetailScreen(navController = navController)
             }
         }
 

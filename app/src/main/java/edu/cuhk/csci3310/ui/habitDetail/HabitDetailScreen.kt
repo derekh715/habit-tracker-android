@@ -4,27 +4,31 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
-import edu.cuhk.csci3310.ui.habitDetail.customHeatmap.Level
 import edu.cuhk.csci3310.ui.habitDetail.customHeatmap.MyHeatMapCalendar
-import java.time.LocalDate
+import edu.cuhk.csci3310.ui.utils.CommonUiEvent
 
 @Composable
-fun HabitDetailScreen(viewModel: HabitDetailViewModel = hiltViewModel()) {
+fun HabitDetailScreen(
+    viewModel: HabitDetailViewModel = hiltViewModel(),
+    navController: NavController
+) {
     val habit = viewModel.habit.collectAsState(initial = null)
     val groups = viewModel.groups.collectAsState(initial = listOf())
-    val heatMap = viewModel.heatMap.collectAsState(initial = mutableMapOf<LocalDate, Level>())
+    val heatMap = viewModel.heatMap.collectAsState(initial = mutableMapOf())
 
     if (habit.value == null || groups.value == null) {
         return
     }
-
     val records = viewModel.records.collectAsState()
     val state = rememberUseCaseState(visible = false)
 
@@ -33,6 +37,10 @@ fun HabitDetailScreen(viewModel: HabitDetailViewModel = hiltViewModel()) {
             when (event) {
                 is HabitDetailScreenUiEvent.ShowAddToGroupDialog -> {
                     state.show()
+                }
+
+                is CommonUiEvent.Navigate -> {
+                    navController.navigate(event.route)
                 }
             }
         }
@@ -69,5 +77,9 @@ fun HabitDetailScreen(viewModel: HabitDetailViewModel = hiltViewModel()) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         MyHeatMapCalendar(heatMap = heatMap.value)
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { viewModel.onEvent(HabitDetailEvent.ChangeHabit(habit.value!!)) }) {
+            Text(text = "Change Habit")
+        }
     }
 }
