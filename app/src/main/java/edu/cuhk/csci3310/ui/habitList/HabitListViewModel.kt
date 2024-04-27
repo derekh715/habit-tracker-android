@@ -3,7 +3,6 @@ package edu.cuhk.csci3310.ui.habitList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import edu.cuhk.csci3310.data.Habit
 import edu.cuhk.csci3310.data.HabitDao
 import edu.cuhk.csci3310.ui.nav.Screen
 import edu.cuhk.csci3310.ui.utils.CommonUiEvent
@@ -15,43 +14,31 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HabitListViewModel
-    @Inject
-    constructor(
-        private val habitDao: HabitDao,
-    ) : ViewModel() {
-        private val _uiChannel = Channel<UiEvent>()
-        val uiChannel = _uiChannel.receiveAsFlow()
+@Inject
+constructor(
+    private val habitDao: HabitDao,
+) : ViewModel() {
+    private val _uiChannel = Channel<UiEvent>()
+    val uiChannel = _uiChannel.receiveAsFlow()
 
-        fun onEvent(event: HabitListEvent) {
-            when (event) {
-                is HabitListEvent.AddHabit -> {
-                    sendEvent(CommonUiEvent.Navigate(Screen.AddHabit.route))
-                }
-                is HabitListEvent.ChangeHabit -> {
-                }
-                is HabitListEvent.RemoveHabit -> {
-                    removeHabit(event.habit)
-                }
-                is HabitListEvent.HabitDetail -> {
-                    sendEvent(CommonUiEvent.Navigate(Screen.HabitDetail.route + "?habitId=${event.habit.habitId}"))
-                }
+    fun onEvent(event: HabitListEvent) {
+        when (event) {
+            is HabitListEvent.AddHabit -> {
+                sendEvent(CommonUiEvent.Navigate(Screen.AddHabit.route))
             }
-        }
 
-        val groupsList = habitDao.getAllHabitsWithGroups()
-        val habitsList = habitDao.getHabitsOnly()
-        private var lastDeletedHabit: Habit? = null
-
-        private fun removeHabit(habit: Habit) {
-            viewModelScope.launch {
-                lastDeletedHabit = habit
-                habitDao.deleteHabit(habit)
-            }
-        }
-
-        private fun sendEvent(event: UiEvent) {
-            viewModelScope.launch {
-                _uiChannel.send(event)
+            is HabitListEvent.HabitDetail -> {
+                sendEvent(CommonUiEvent.Navigate(Screen.HabitDetail.route + "?habitId=${event.habit.habitId}"))
             }
         }
     }
+
+    val groupsList = habitDao.getAllHabitsWithGroups()
+    val habitsList = habitDao.getHabitsOnly()
+
+    private fun sendEvent(event: UiEvent) {
+        viewModelScope.launch {
+            _uiChannel.send(event)
+        }
+    }
+}

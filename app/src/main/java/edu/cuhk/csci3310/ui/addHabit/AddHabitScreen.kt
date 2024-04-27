@@ -26,7 +26,7 @@ fun AddHabitScreen(viewModel: AddHabitViewModel = hiltViewModel(), navController
     LaunchedEffect(key1 = true, block = {
         viewModel.uiChannel.collect { event ->
             when (event) {
-                is CommonUiEvent.Navigate -> {
+                is CommonUiEvent.NavigateBack -> {
                     navController.popBackStack()
                 }
             }

@@ -11,7 +11,6 @@ import edu.cuhk.csci3310.data.Habit
 @Composable
 fun HabitList(
     habits: List<Habit>,
-    deleteHabit: (Habit) -> Unit,
     habitDetail: (Habit) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -23,7 +22,6 @@ fun HabitList(
         items(habits) { habit ->
             HabitItem(
                 habit = habit,
-                deleteHabit = deleteHabit,
                 modifier =
                 Modifier
                     .clickable { habitDetail(habit) }

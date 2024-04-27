@@ -13,7 +13,6 @@ import edu.cuhk.csci3310.data.Habit
 import edu.cuhk.csci3310.data.HabitDao
 import edu.cuhk.csci3310.ui.formUtils.TextInputInfo
 import edu.cuhk.csci3310.ui.formUtils.ToggleableInfo
-import edu.cuhk.csci3310.ui.nav.Screen
 import edu.cuhk.csci3310.ui.utils.Calculations.calculateNextDay
 import edu.cuhk.csci3310.ui.utils.CommonUiEvent
 import edu.cuhk.csci3310.ui.utils.UiEvent
@@ -137,7 +136,7 @@ constructor(
     val options = _options.asStateFlow()
 
     private val _until = prefilledHabit.map {
-        it.until
+        it?.until ?: LocalDate.now()
     }.mutableStateIn(
         scope = viewModelScope,
         initialValue = LocalDate.now()
@@ -257,7 +256,7 @@ constructor(
 
         viewModelScope.launch {
             habitDao.insertHabit(habit)
-            _uiChannel.send(CommonUiEvent.Navigate(Screen.HabitList.route))
+            _uiChannel.send(CommonUiEvent.NavigateBack)
         }
     }
 

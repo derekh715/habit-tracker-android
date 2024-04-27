@@ -163,6 +163,10 @@ constructor(
             is HabitDetailEvent.ChangeHabit -> {
                 changeHabit(event)
             }
+
+            is HabitDetailEvent.RemoveHabit -> {
+                removeHabit(event)
+            }
         }
     }
 
@@ -198,6 +202,16 @@ constructor(
                 return@launch
             }
             habitDao.addRecord(event.record)
+        }
+    }
+
+    private fun removeHabit(event: HabitDetailEvent.RemoveHabit) {
+        viewModelScope.launch {
+            if (habit.value == null) {
+                return@launch
+            }
+            habitDao.deleteHabit(event.habit)
+            _uiChannel.send(CommonUiEvent.NavigateBack)
         }
     }
 

@@ -14,4 +14,5 @@ sealed class HabitDetailEvent {
     data class ChangeRecord(val record: Record) : HabitDetailEvent()
 
     data class ChangeHabit(val habit: Habit) : HabitDetailEvent()
+    data class RemoveHabit(val habit: Habit) : HabitDetailEvent()
 }

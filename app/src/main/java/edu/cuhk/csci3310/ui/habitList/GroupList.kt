@@ -15,7 +15,6 @@ import edu.cuhk.csci3310.data.Habit
 @Composable
 fun GroupList(
     groupList: Map<String, List<Habit>>,
-    deleteHabit: (Habit) -> Unit,
 ) {
     val list = groupList.entries.toList()
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
@@ -24,7 +23,7 @@ fun GroupList(
                 Text(text = group.key, fontSize = 24.sp, modifier = Modifier.padding(bottom = 8.dp))
                 Column {
                     group.value.map { habit ->
-                        HabitItem(habit = habit, deleteHabit = deleteHabit)
+                        HabitItem(habit = habit)
                     }
                 }
             }

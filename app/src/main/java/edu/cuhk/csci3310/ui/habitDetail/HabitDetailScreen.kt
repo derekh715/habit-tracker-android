@@ -46,6 +46,10 @@ fun HabitDetailScreen(
                 is CommonUiEvent.Navigate -> {
                     navController.navigate(event.route)
                 }
+
+                is CommonUiEvent.NavigateBack -> {
+                    navController.popBackStack()
+                }
             }
         }
     })
@@ -106,7 +110,7 @@ fun HabitDetailScreen(
             Button(onClick = { viewModel.onEvent(HabitDetailEvent.ChangeHabit(habit.value!!)) }) {
                 Text(text = "Change Habit")
             }
-            Button(onClick = { viewModel.onEvent(HabitDetailEvent.ChangeHabit(habit.value!!)) }) {
+            Button(onClick = { viewModel.onEvent(HabitDetailEvent.RemoveHabit(habit.value!!)) }) {
                 Text(text = "Delete Habit")
             }
         }

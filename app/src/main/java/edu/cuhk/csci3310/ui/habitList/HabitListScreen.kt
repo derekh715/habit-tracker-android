@@ -34,8 +34,7 @@ fun HabitListScreen(
         mutableStateOf("All Habits")
     }
     LaunchedEffect(key1 = true, block = {
-        viewModel.uiChannel.collect {
-                event ->
+        viewModel.uiChannel.collect { event ->
             when (event) {
                 is CommonUiEvent.Navigate -> {
                     onNavigate(event)
@@ -48,33 +47,29 @@ fun HabitListScreen(
     ) {
         MyDropdown(
             options =
-                listOf(
-                    ToggleableInfo(toggled = option == "All Habits", text = "All Habits"),
-                    ToggleableInfo(toggled = option == "By Group", text = "By Group"),
-                ),
+            listOf(
+                ToggleableInfo(toggled = option == "All Habits", text = "All Habits"),
+                ToggleableInfo(toggled = option == "By Group", text = "By Group"),
+            ),
             setOption = {
                 option = it.text
             },
         )
         if (option == "All Habits") {
-            HabitList(habits = habitsList.value, deleteHabit = {
-                viewModel.onEvent(HabitListEvent.RemoveHabit(it))
-            }, habitDetail = {
+            HabitList(habits = habitsList.value, habitDetail = {
                 viewModel.onEvent(HabitListEvent.HabitDetail(it))
             }, modifier = Modifier.weight(1f))
         } else {
-            GroupList(groupList = groupList.value, deleteHabit = {
-                viewModel.onEvent(HabitListEvent.RemoveHabit(it))
-            })
+            GroupList(groupList = groupList.value)
         }
         Button(
             onClick = {
                 viewModel.onEvent(HabitListEvent.AddHabit)
             },
             modifier =
-                Modifier
-                    .align(Alignment.End)
-                    .padding(end = 8.dp, bottom = 8.dp),
+            Modifier
+                .align(Alignment.End)
+                .padding(end = 8.dp, bottom = 8.dp),
         ) {
             Icon(Icons.Filled.Add, contentDescription = "Add New Habit")
             Text(text = "Add New Habit")
