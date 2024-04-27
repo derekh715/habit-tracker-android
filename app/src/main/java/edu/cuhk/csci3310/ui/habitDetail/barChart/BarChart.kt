@@ -35,11 +35,11 @@ private val bottomAxisValueFormatter =
 
 @Composable
 fun BarChart(map: Map<LocalDate, Int>) {
-    val endDate = remember { LocalDate.now() }
+    val endDate = remember { LocalDate.now().plusDays(1) }
     val startDate = remember { endDate.minusDays(50) }
     val modelProducer = remember { CartesianChartModelProducer.build() }
     val range = (startDate..endDate)
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key1 = map) {
         modelProducer.tryRunTransaction {
             columnSeries {
                 series(

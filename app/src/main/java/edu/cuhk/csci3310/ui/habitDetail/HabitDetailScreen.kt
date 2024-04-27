@@ -57,9 +57,27 @@ fun HabitDetailScreen(
         HabitDayEntries(habit = habit.value!!, records = records.value,
             changeStatus = { index, it ->
                 viewModel.onEvent(
-                    HabitDetailEvent.ChangeRecord(
+                    HabitDetailEvent.ChangeRecordStatus(
                         index = index,
                         newStatus = it
+                    )
+                )
+            },
+            changeTimes = { r, newTimes ->
+                viewModel.onEvent(
+                    HabitDetailEvent.ChangeRecord(
+                        r.copy(
+                            times = newTimes
+                        )
+                    )
+                )
+            },
+            changeReason = { r, newReason ->
+                viewModel.onEvent(
+                    HabitDetailEvent.ChangeRecord(
+                        r.copy(
+                            reason = newReason
+                        )
                     )
                 )
             }

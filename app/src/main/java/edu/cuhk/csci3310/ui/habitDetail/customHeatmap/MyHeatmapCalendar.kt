@@ -18,8 +18,9 @@ fun findLevel(times: Int?): Level {
     }
 
     return when {
-        times < 0 -> Level.Negative
-        times == 0 -> Level.Skipped
+        times < -1 -> Level.Negative
+        times == -1 -> Level.Skipped
+        times == 0 -> Level.Zero
         times == 1 -> Level.One
         times in 2..5 -> Level.Two
         times in 6..10 -> Level.Three

@@ -144,6 +144,7 @@ constructor(
                             habitId = habitIds.random(),
                             recordId = null,
                             reason = null,
+                            times = 1
                         ),
                     )
                 }

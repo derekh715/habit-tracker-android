@@ -20,12 +20,11 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-        // will use it later when migrations happen
-//        kapt {
-//            arguments {
-//                arg("room.schemaLocation", "$projectDir/schemas")
-//            }
-//        }
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {
@@ -81,7 +80,7 @@ dependencies {
     implementation "com.maxkeppeler.sheets-compose-dialogs:clock:$sheets_version"
     implementation "com.maxkeppeler.sheets-compose-dialogs:list:$sheets_version"
     implementation "com.maxkeppeler.sheets-compose-dialogs:calendar:$sheets_version"
-
+    implementation "com.maxkeppeler.sheets-compose-dialogs:input:$sheets_version"
 
     // Compose dependencies
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0"

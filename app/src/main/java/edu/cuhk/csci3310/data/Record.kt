@@ -1,5 +1,6 @@
 package edu.cuhk.csci3310.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
@@ -33,4 +34,7 @@ data class Record(
     // skipped reason (if status is not skipped, ignore this field)
     val reason: String?,
     val date: LocalDate,
+    // user may complete tasks multiple times per day
+    @ColumnInfo(defaultValue = "0")
+    val times: Int
 )

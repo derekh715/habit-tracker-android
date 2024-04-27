@@ -79,6 +79,7 @@ constructor(
                         reason = null,
                         recordId = null,
                         habitId = habitId,
+                        times = 0
                     ),
                 )
             }
@@ -95,8 +96,12 @@ constructor(
     val dateMap: StateFlow<Map<LocalDate, Int>> = _records.map {
         val map = mutableMapOf<LocalDate, Int>()
         it.forEach { r ->
-            // TODO: add times
-            map[r.date] = 1
+            map[r.date] = when (r.status) {
+                RecordStatus.SKIPPED -> -1
+                RecordStatus.UNFULFILLED -> -2
+                RecordStatus.FULFILLED -> r.times
+                RecordStatus.NOTFILLED -> 0
+            }
         }
         return@map map
     }.stateIn(
@@ -147,8 +152,12 @@ constructor(
                 addHabitToGroup(event)
             }
 
-            is HabitDetailEvent.ChangeRecord -> {
+            is HabitDetailEvent.ChangeRecordStatus -> {
                 recordStatusChange(event)
+            }
+
+            is HabitDetailEvent.ChangeRecord -> {
+                recordChange(event)
             }
 
             is HabitDetailEvent.ChangeHabit -> {
@@ -161,19 +170,37 @@ constructor(
         sendEvent(CommonUiEvent.Navigate(Screen.AddHabit.route + "?habitId=${event.habit.habitId}"))
     }
 
-    private fun recordStatusChange(event: HabitDetailEvent.ChangeRecord) {
+    private fun recordStatusChange(event: HabitDetailEvent.ChangeRecordStatus) {
         viewModelScope.launch {
             if (habit.value == null || groups.value == null) {
                 return@launch
             }
-
             if (event.newStatus === RecordStatus.NOTFILLED) {
                 habitDao.deleteRecord(records.value[event.index])
             } else {
-                habitDao.addRecord(records.value[event.index].copy(status = event.newStatus))
+                habitDao.addRecord(
+                    records.value[event.index].copy(
+                        status = event.newStatus,
+                        times = if (event.newStatus === RecordStatus.FULFILLED) {
+                            1
+                        } else {
+                            0
+                        }
+                    )
+                )
             }
         }
     }
+
+    private fun recordChange(event: HabitDetailEvent.ChangeRecord) {
+        viewModelScope.launch {
+            if (habit.value == null || groups.value == null) {
+                return@launch
+            }
+            habitDao.addRecord(event.record)
+        }
+    }
+
 
     private fun sendEvent(event: UiEvent) {
         viewModelScope.launch {
