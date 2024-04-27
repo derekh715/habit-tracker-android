@@ -113,4 +113,9 @@ dependencies {
     // github-like heatmap calendar
     implementation 'com.kizitonwose.calendar:compose:2.5.0'
 
+    // bar charts
+    def vico_version = "2.0.0-alpha.17"
+    implementation("com.patrykandpatrick.vico:compose:$vico_version")
+    implementation("com.patrykandpatrick.vico:compose-m3:$vico_version")
+    implementation("com.patrykandpatrick.vico:core:$vico_version")
 }

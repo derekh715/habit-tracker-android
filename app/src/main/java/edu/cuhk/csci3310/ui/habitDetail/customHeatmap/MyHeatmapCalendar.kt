@@ -12,8 +12,24 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import java.time.LocalDate
 import java.time.YearMonth
 
+fun findLevel(times: Int?): Level {
+    if (times == null) {
+        return Level.Zero
+    }
+
+    return when {
+        times < 0 -> Level.Negative
+        times == 0 -> Level.Skipped
+        times == 1 -> Level.One
+        times in 2..5 -> Level.Two
+        times in 6..10 -> Level.Three
+        times >= 11 -> Level.Four
+        else -> Level.Zero
+    }
+}
+
 @Composable
-fun MyHeatMapCalendar(heatMap: Map<LocalDate, Level>) {
+fun MyHeatMapCalendar(heatMap: Map<LocalDate, Int>) {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(4) }
     val endMonth = remember { currentMonth.plusMonths(0) } // get until
@@ -29,10 +45,11 @@ fun MyHeatMapCalendar(heatMap: Map<LocalDate, Level>) {
         HeatMapCalendar(
             state = state,
             dayContent = { day, heatmapWeek ->
+                val level = findLevel(heatMap[day.date])
                 DayTile(
                     day = day,
                     week = heatmapWeek,
-                    level = heatMap[day.date] ?: Level.Zero
+                    level = level
                 )
             },
             weekHeader = { WeekHeader(it) },

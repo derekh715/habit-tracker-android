@@ -29,19 +29,26 @@ fun MyDropdown(
     val selectedOption =
         options.find {
             it.toggled
-        }!!
+        } ?: options.first()
 
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
         modifier = Modifier.padding(vertical = 16.dp),
     ) {
-        TextField(value = selectedOption.text, onValueChange = {}, readOnly = true, label = { Text(text = "") }, trailingIcon = {
-            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-        }, colors = ExposedDropdownMenuDefaults.textFieldColors(), modifier = Modifier.menuAnchor())
+        TextField(
+            value = selectedOption.text,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(text = "") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            modifier = Modifier.menuAnchor()
+        )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach {
-                    option ->
+            options.forEach { option ->
                 DropdownMenuItem(text = { Text(option.text) }, onClick = {
                     setOption(option)
                     expanded = false

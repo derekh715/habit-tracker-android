@@ -9,7 +9,6 @@ import edu.cuhk.csci3310.data.HabitDao
 import edu.cuhk.csci3310.data.HabitGroupCrossRef
 import edu.cuhk.csci3310.data.Record
 import edu.cuhk.csci3310.data.RecordStatus
-import edu.cuhk.csci3310.ui.habitDetail.customHeatmap.Level
 import edu.cuhk.csci3310.ui.nav.Screen
 import edu.cuhk.csci3310.ui.utils.CommonUiEvent
 import edu.cuhk.csci3310.ui.utils.UiEvent
@@ -93,15 +92,11 @@ constructor(
         initialValue = listOf()
     )
 
-    val heatMap: StateFlow<Map<LocalDate, Level>> = _records.map {
-        val map = mutableMapOf<LocalDate, Level>()
+    val dateMap: StateFlow<Map<LocalDate, Int>> = _records.map {
+        val map = mutableMapOf<LocalDate, Int>()
         it.forEach { r ->
-            map[r.date] = when (r.status) {
-                RecordStatus.FULFILLED -> Level.One
-                RecordStatus.UNFULFILLED -> Level.Negative
-                RecordStatus.SKIPPED -> Level.Skipped
-                RecordStatus.NOTFILLED -> Level.Zero
-            }
+            // TODO: add times
+            map[r.date] = 1
         }
         return@map map
     }.stateIn(
