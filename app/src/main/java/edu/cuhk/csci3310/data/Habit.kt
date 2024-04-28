@@ -1,5 +1,6 @@
 package edu.cuhk.csci3310.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -21,4 +22,6 @@ data class Habit(
     @Embedded
     val frequency: Frequency,
     val nextTime: LocalDate,
+    @ColumnInfo(defaultValue = "0")
+    var creationDate: LocalDate = LocalDate.now(),
 )

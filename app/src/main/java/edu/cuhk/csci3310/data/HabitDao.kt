@@ -3,7 +3,6 @@ package edu.cuhk.csci3310.data
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Embedded
-import androidx.room.MapColumn
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +12,11 @@ data class GroupListOption(
     @Embedded
     val group: Group,
     var selected: Boolean,
+)
+
+data class GroupColour(
+    val groupName: String,
+    val groupColour: Int,
 )
 
 @Dao
@@ -37,7 +41,7 @@ interface HabitDao {
 
     // long returns the record id
     @Upsert
-    suspend fun addRecord(record: Record): Long
+    suspend fun insertRecord(record: Record): Long
 
     @Delete
     suspend fun deleteRecord(record: Record)
@@ -48,17 +52,33 @@ interface HabitDao {
     )
     fun getGroupsOfHabit(habitId: Long): Flow<List<Group>>
 
+//    @Query(
+//        "SELECT h.*, g.name as groupName FROM habit_group_cross_ref hg " +
+//                "INNER JOIN habit h ON hg.habitId = h.habitId " +
+//                "INNER JOIN `group` g ON hg.groupId = g.groupId" +
+//                " UNION SELECT h.*, 'No Group' as groupName FROM habit h " +
+//                "WHERE h.habitId NOT IN (SELECT habitId FROM habit_group_cross_ref) ",
+//    )
+//    fun getAllHabitsWithGroups(): Flow<
+//            Map<
+//                    @MapColumn(columnName = "groupName")
+//                    String,
+//                    List<Habit>,
+//                    >,
+//            >
+
     @Query(
-        "SELECT h.*, g.name as groupName FROM habit_group_cross_ref hg " +
-                "INNER JOIN habit h ON hg.habitId = h.habitId " +
-                "INNER JOIN `group` g ON hg.groupId = g.groupId" +
-                " UNION SELECT h.*, 'No Group' as groupName FROM habit h " +
-                "WHERE h.habitId NOT IN (SELECT habitId FROM habit_group_cross_ref) ",
+        """
+        SELECT h.*, g.name AS groupName, g.colour AS groupColour FROM habit_group_cross_ref hg 
+        INNER JOIN habit h ON hg.habitId = h.habitId 
+        INNER JOIN `group` g ON hg.groupId = g.groupId
+        UNION SELECT h.*, 'No Group' as groupName, 1 as groupColour FROM habit h
+        WHERE h.habitId NOT IN (SELECT habitId FROM habit_group_cross_ref)
+        """
     )
     fun getAllHabitsWithGroups(): Flow<
             Map<
-                    @MapColumn(columnName = "groupName")
-                    String,
+                    GroupColour,
                     List<Habit>,
                     >,
             >

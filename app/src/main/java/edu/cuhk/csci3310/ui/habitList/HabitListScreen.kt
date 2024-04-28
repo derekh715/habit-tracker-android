@@ -60,7 +60,9 @@ fun HabitListScreen(
                 viewModel.onEvent(HabitListEvent.HabitDetail(it))
             }, modifier = Modifier.weight(1f))
         } else {
-            GroupList(groupList = groupList.value)
+            GroupList(groupList = groupList.value, habitDetail = {
+                viewModel.onEvent(HabitListEvent.HabitDetail(it))
+            }, modifier = Modifier.weight(1f))
         }
         Button(
             onClick = {

@@ -10,9 +10,10 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [Group::class, Habit::class, Record::class, HabitGroupCrossRef::class],
-    version = 2,
+    version = 3,
     autoMigrations = [
-        AutoMigration(from = 1, to = 2)
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3)
     ]
 )
 @TypeConverters(Converters::class)

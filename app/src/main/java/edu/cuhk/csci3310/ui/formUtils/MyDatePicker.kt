@@ -26,18 +26,19 @@ fun MyDatePicker(
     }
     CalendarDialog(
         header =
-            Header.Default(title = "This habit will end in"),
+        Header.Default(title = "This habit will end in"),
         state = state,
         config =
-            CalendarConfig(
-                yearSelection = true,
-                monthSelection = true,
-            ),
+        CalendarConfig(
+            yearSelection = true,
+            monthSelection = true,
+            cameraDate = LocalDate.now().plusMonths(1)
+        ),
         selection =
-            CalendarSelection.Date(
-                selectedDate = until,
-            ) {
-                dateChosen(it)
-            },
+        CalendarSelection.Date(
+            selectedDate = until,
+        ) {
+            dateChosen(it)
+        },
     )
 }

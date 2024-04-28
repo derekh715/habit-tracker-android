@@ -1,11 +1,13 @@
 package edu.cuhk.csci3310.ui.addHabit
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import edu.cuhk.csci3310.ui.formUtils.MyDatePicker
@@ -22,12 +24,17 @@ fun AddHabitScreen(viewModel: AddHabitViewModel = hiltViewModel(), navController
     val options = viewModel.options.collectAsState()
     val polarities = viewModel.polarities.collectAsState()
     val until = viewModel.until.collectAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = true, block = {
         viewModel.uiChannel.collect { event ->
             when (event) {
                 is CommonUiEvent.NavigateBack -> {
                     navController.popBackStack()
+                }
+
+                is CommonUiEvent.ShowToast -> {
+                    Toast.makeText(context, event.content, Toast.LENGTH_LONG).show()
                 }
             }
         }

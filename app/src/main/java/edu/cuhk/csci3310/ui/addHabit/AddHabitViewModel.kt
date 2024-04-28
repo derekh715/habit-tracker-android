@@ -13,7 +13,6 @@ import edu.cuhk.csci3310.data.Habit
 import edu.cuhk.csci3310.data.HabitDao
 import edu.cuhk.csci3310.ui.formUtils.TextInputInfo
 import edu.cuhk.csci3310.ui.formUtils.ToggleableInfo
-import edu.cuhk.csci3310.ui.utils.Calculations.calculateNextDay
 import edu.cuhk.csci3310.ui.utils.CommonUiEvent
 import edu.cuhk.csci3310.ui.utils.UiEvent
 import edu.cuhk.csci3310.ui.utils.mutableStateIn
@@ -80,7 +79,7 @@ constructor(
     val description = _description.asStateFlow()
 
     private fun polaritiesInfo(habit: Habit?): List<ToggleableInfo> {
-        val isPositive = habit?.positive ?: false
+        val isPositive = habit?.positive ?: true
         return listOf(
             ToggleableInfo(
                 text = "Positive",
@@ -227,34 +226,46 @@ constructor(
     }
 
     private fun addHabit() {
-        // check if frequency is selected
-        val unit =
-            when (_options.value.find { it.toggled }!!.text) {
-                "Daily" -> FrequencyUnit.DAILY
-                "Weekly" -> FrequencyUnit.WEEKLY
-                "Monthly" -> FrequencyUnit.MONTHLY
-                "Yearly" -> FrequencyUnit.YEARLY
-                else -> return
-            }
-
-        val freq =
-            Frequency(
-                unit = unit,
-                times = times.value.value.toInt(),
-            )
-        val habit =
-            Habit(
-                description = description.value.value,
-                title = title.value.value,
-                // is positive polarity selected? If yes then it is positive
-                // the polarity can either be positive or negative
-                positive = _polarities.value.first().toggled,
-                until = _until.value,
-                frequency = freq,
-                nextTime = calculateNextDay(freq),
-            )
-
         viewModelScope.launch {
+            // check if titles is filled
+            if (title.value.value.isEmpty()) {
+                _uiChannel.send(CommonUiEvent.ShowToast("Title is empty"))
+                return@launch
+            }
+            if (until.value <= LocalDate.now()) {
+                _uiChannel.send(CommonUiEvent.ShowToast("This habit will end as soon as it starts!"))
+                return@launch
+            }
+            // check if frequency is selected
+            val unit =
+                when (_options.value.find { it.toggled }!!.text) {
+                    "Daily" -> FrequencyUnit.DAILY
+                    "Weekly" -> FrequencyUnit.WEEKLY
+                    "Monthly" -> FrequencyUnit.MONTHLY
+                    "Yearly" -> FrequencyUnit.YEARLY
+                    else -> {
+                        _uiChannel.send(CommonUiEvent.ShowToast("Frequency is not set!"))
+                        return@launch
+                    }
+                }
+
+            val freq =
+                Frequency(
+                    unit = unit,
+                    times = times.value.value.toInt(),
+                )
+            val habit =
+                Habit(
+                    description = description.value.value,
+                    title = title.value.value,
+                    // is positive polarity selected? If yes then it is positive
+                    // the polarity can either be positive or negative
+                    positive = _polarities.value.first().toggled,
+                    until = _until.value,
+                    frequency = freq,
+                    nextTime = LocalDate.now(),
+                )
+
             habitDao.insertHabit(habit)
             _uiChannel.send(CommonUiEvent.NavigateBack)
         }

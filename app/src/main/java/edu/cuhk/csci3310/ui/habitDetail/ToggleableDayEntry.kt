@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import edu.cuhk.csci3310.data.Habit
 import edu.cuhk.csci3310.data.Record
 import edu.cuhk.csci3310.data.RecordStatus
 import kotlinx.coroutines.delay
@@ -39,6 +40,7 @@ data class RecordStatusProps(
 
 @Composable
 fun ToggleableDayEntry(
+    habit: Habit,
     record: Record,
     index: Int,
     changeStatus: (RecordStatus) -> Unit,
@@ -102,22 +104,28 @@ fun ToggleableDayEntry(
         }
     }
 
-
+    val isEnabled = habit.until >= record.date
+    val colour = if (isEnabled) {
+        props.colour
+    } else {
+        Color.LightGray
+    }
 
     return Column(modifier = Modifier.padding(end = 64.dp)) {
         Text(
             text = record.date.format(dayMonthFormatter),
             fontWeight = FontWeight.SemiBold,
-            color = props.colour
+            color = colour
         )
         IconButton(
+            enabled = isEnabled,
             onClick = {},
             interactionSource = interactionSource,
             modifier = Modifier
                 .size(48.dp)
-                .border(4.dp, props.colour, shape = CircleShape)
+                .border(4.dp, colour, shape = CircleShape)
         ) {
-            props.icon?.let { Icon(it, contentDescription = null, tint = props.colour) }
+            props.icon?.let { Icon(it, contentDescription = null, tint = colour) }
         }
     }
 }

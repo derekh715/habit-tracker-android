@@ -97,7 +97,7 @@ constructor(
                             frequency = freq,
                             positive = listOf(false, true).random(),
                             until = generateRandomDate(),
-                            nextTime = calculateNextDay(freq),
+                            nextTime = calculateNextDay(LocalDate.now(), freq),
                         ),
                     )
                 }
@@ -131,7 +131,7 @@ constructor(
             val habitIds = habitDao.getAllHabitIds()
             try {
                 repeat(_amount.value.value.toInt()) {
-                    habitDao.addRecord(
+                    habitDao.insertRecord(
                         Record(
                             status =
                             when (rand.nextInt(from = 1, until = 4)) {

@@ -90,7 +90,7 @@ fun HabitDayEntries(
                     if (records[it].status != RecordStatus.UNFULFILLED && records[it].status != RecordStatus.NOTFILLED) {
                         state.show()
                     }
-                }, index = index)
+                }, index = index, habit = habit)
             }
         }
         InputDialog(

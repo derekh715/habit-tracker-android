@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.cuhk.csci3310.data.GroupDao
+import edu.cuhk.csci3310.data.Habit
 import edu.cuhk.csci3310.data.HabitDao
 import edu.cuhk.csci3310.data.HabitGroupCrossRef
 import edu.cuhk.csci3310.data.Record
 import edu.cuhk.csci3310.data.RecordStatus
 import edu.cuhk.csci3310.ui.nav.Screen
+import edu.cuhk.csci3310.ui.utils.Calculations
 import edu.cuhk.csci3310.ui.utils.CommonUiEvent
 import edu.cuhk.csci3310.ui.utils.UiEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -174,24 +176,85 @@ constructor(
         sendEvent(CommonUiEvent.Navigate(Screen.AddHabit.route + "?habitId=${event.habit.habitId}"))
     }
 
+    // helper functions for recordStatusChange
+
+    private suspend fun notFilled(event: HabitDetailEvent.ChangeRecordStatus) {
+        habitDao.deleteRecord(records.value[event.index])
+        // don't modify the next time date if it is a previous record
+        // exception: the latest record
+        if (records.value[event.index].date >= habit.value!!.nextTime || event.index == 0) {
+            habitDao.insertHabit(
+                habit.value!!.copy(
+                    nextTime = Calculations.calculatePreviousDay(
+                        habit.value!!.nextTime,
+                        habit.value!!.frequency
+                    ),
+                )
+            )
+        }
+
+    }
+
+    private suspend fun changeRecordStatusOrAdd(event: HabitDetailEvent.ChangeRecordStatus) {
+        habitDao.insertRecord(
+            records.value[event.index].copy(
+                status = event.newStatus,
+                times = if (event.newStatus === RecordStatus.FULFILLED) {
+                    1
+                } else {
+                    0
+                }
+            )
+        )
+    }
+
+    private fun calculateNextTime(habit: Habit): LocalDate {
+        var nextTime = Calculations.calculateNextDay(
+            habit.nextTime,
+            habit.frequency
+        )
+        val isOverdue = LocalDate.now() > nextTime
+        // if overdue, count from today
+        if (isOverdue) {
+            nextTime =
+                Calculations.calculateNextDay(LocalDate.now(), habit.frequency)
+        }
+        return nextTime
+    }
+
+    private suspend fun fulfilled(event: HabitDetailEvent.ChangeRecordStatus) {
+        changeRecordStatusOrAdd(event)
+        // don't modify the next time date if it is a previous record
+        // exception: the latest record
+        if (records.value[event.index].date >= habit.value!!.nextTime || event.index == 0) {
+            habitDao.insertHabit(
+                habit.value!!.copy(
+                    nextTime = calculateNextTime(habit.value!!),
+                )
+            )
+        }
+    }
+
+
+    private suspend fun skip(event: HabitDetailEvent.ChangeRecordStatus) {
+        changeRecordStatusOrAdd(event)
+    }
+
+    private suspend fun unfulfilled(event: HabitDetailEvent.ChangeRecordStatus) {
+        changeRecordStatusOrAdd(event)
+    }
+
+
     private fun recordStatusChange(event: HabitDetailEvent.ChangeRecordStatus) {
         viewModelScope.launch {
             if (habit.value == null || groups.value == null) {
                 return@launch
             }
-            if (event.newStatus === RecordStatus.NOTFILLED) {
-                habitDao.deleteRecord(records.value[event.index])
-            } else {
-                habitDao.addRecord(
-                    records.value[event.index].copy(
-                        status = event.newStatus,
-                        times = if (event.newStatus === RecordStatus.FULFILLED) {
-                            1
-                        } else {
-                            0
-                        }
-                    )
-                )
+            when (event.newStatus) {
+                RecordStatus.FULFILLED -> fulfilled(event)
+                RecordStatus.NOTFILLED -> notFilled(event)
+                RecordStatus.UNFULFILLED -> unfulfilled(event)
+                RecordStatus.SKIPPED -> skip(event)
             }
         }
     }
@@ -201,7 +264,7 @@ constructor(
             if (habit.value == null || groups.value == null) {
                 return@launch
             }
-            habitDao.addRecord(event.record)
+            habitDao.insertRecord(event.record)
         }
     }
 

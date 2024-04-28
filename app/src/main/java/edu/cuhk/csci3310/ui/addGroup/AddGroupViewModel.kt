@@ -122,6 +122,10 @@ constructor(
 
     private fun addGroup() {
         viewModelScope.launch {
+            if (_name.value.value.isEmpty()) {
+                sendEvent(CommonUiEvent.ShowToast("Group name is empty!"))
+                return@launch
+            }
             val group =
                 Group(
                     name = _name.value.value,
