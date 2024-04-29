@@ -1,5 +1,6 @@
 package edu.cuhk.csci3310.ui.habitList
 
+import Slate200
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +27,7 @@ import java.time.LocalDate
 fun HabitItem(
     habit: Habit,
     modifier: Modifier = Modifier,
-    borderColour: Color = Color.LightGray
+    borderColour: Color = Slate200
 ) {
     OutlinedCard(
         modifier = modifier,
@@ -53,7 +55,8 @@ fun HabitItem(
                 Icon(
                     Icons.Filled.Timer,
                     contentDescription = "This habit is due",
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(32.dp),
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }

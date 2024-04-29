@@ -1,5 +1,6 @@
 package edu.cuhk.csci3310.ui.habitDetail
 
+import Slate50
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,28 +54,28 @@ fun ToggleableDayEntry(
     val props =
         when (record.status) {
             RecordStatus.NOTFILLED -> RecordStatusProps(
-                colour = Color.Gray,
+                colour = MaterialTheme.colorScheme.outline,
                 icon = null,
                 nextStatus = RecordStatus.FULFILLED
             )
 
             RecordStatus.FULFILLED ->
                 RecordStatusProps(
-                    colour = Color.Green,
+                    colour = MaterialTheme.colorScheme.primary,
                     icon = Icons.Outlined.Check,
                     nextStatus = RecordStatus.UNFULFILLED,
                 )
 
             RecordStatus.UNFULFILLED ->
                 RecordStatusProps(
-                    colour = Color.Red,
+                    colour = MaterialTheme.colorScheme.error,
                     icon = Icons.Outlined.Close,
                     nextStatus = RecordStatus.SKIPPED,
                 )
 
             RecordStatus.SKIPPED ->
                 RecordStatusProps(
-                    colour = Color.Yellow,
+                    colour = MaterialTheme.colorScheme.secondary,
                     icon = Icons.Outlined.Celebration,
                     nextStatus = RecordStatus.NOTFILLED,
                 )
@@ -108,7 +110,7 @@ fun ToggleableDayEntry(
     val colour = if (isEnabled) {
         props.colour
     } else {
-        Color.LightGray
+        Slate50
     }
 
     return Column(modifier = Modifier.padding(end = 64.dp)) {

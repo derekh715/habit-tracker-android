@@ -18,11 +18,13 @@ import edu.cuhk.csci3310.ui.utils.UiEvent
 import edu.cuhk.csci3310.ui.utils.mutableStateIn
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -51,6 +53,11 @@ constructor(
         )
     }
 
+    val habit = prefilledHabit.map { it }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = null
+    )
 
     private val _title = prefilledHabit.map {
         titleInputInfo(it)
@@ -256,6 +263,7 @@ constructor(
                 )
             val habit =
                 Habit(
+                    habitId = habit.value?.habitId,
                     description = description.value.value,
                     title = title.value.value,
                     // is positive polarity selected? If yes then it is positive

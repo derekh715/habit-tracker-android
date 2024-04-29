@@ -24,6 +24,7 @@ fun AddHabitScreen(viewModel: AddHabitViewModel = hiltViewModel(), navController
     val options = viewModel.options.collectAsState()
     val polarities = viewModel.polarities.collectAsState()
     val until = viewModel.until.collectAsState()
+    val hasHabit = viewModel.habit.collectAsState().value != null
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true, block = {
@@ -64,7 +65,13 @@ fun AddHabitScreen(viewModel: AddHabitViewModel = hiltViewModel(), navController
                 AddHabitEvent.AddHabit,
             )
         }) {
-            Text("Add Habit")
+            Text(
+                if (hasHabit) {
+                    "Change Habit"
+                } else {
+                    "Add Habit"
+                }
+            )
         }
     }
 }

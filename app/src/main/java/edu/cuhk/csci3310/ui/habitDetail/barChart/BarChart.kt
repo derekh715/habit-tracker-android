@@ -1,9 +1,9 @@
 package edu.cuhk.csci3310.ui.habitDetail.barChart
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
@@ -65,8 +65,7 @@ fun BarChart(map: Map<LocalDate, Int>) {
                         rememberLineComponent(
                             thickness = 4.dp,
                             shape = Shape.rounded(1.dp),
-                            // TODO: set as group colour
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 )

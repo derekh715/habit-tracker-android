@@ -1,20 +1,21 @@
 package edu.cuhk.csci3310.ui.nav
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Task
-import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Task
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -46,11 +47,14 @@ fun BottomNavBar(navController: NavController) {
     NavigationBar {
         val navBackstackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackstackEntry?.destination
-        navigationList.forEach {
-                item ->
+        navigationList.forEach { item ->
             // if the whole expression evaluates to null, coalesce it to false
             val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
             NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.secondary,
+                    indicatorColor = Color.Transparent
+                ),
                 selected = isSelected,
                 onClick = {
                     navController.navigate(item.route) {
