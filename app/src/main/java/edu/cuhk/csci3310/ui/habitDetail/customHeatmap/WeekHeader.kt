@@ -3,6 +3,7 @@ package edu.cuhk.csci3310.ui.habitDetail.customHeatmap
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,13 +17,13 @@ import java.util.Locale
 fun WeekHeader(dayOfWeek: DayOfWeek) {
     Box(
         modifier = Modifier
-            .height(HeatmapCalendarValues.daySize) // Must set a height on the day of week so it aligns with the day.
+            .height(28.dp)
             .padding(horizontal = 8.dp),
     ) {
         Text(
             text = dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()),
             modifier = Modifier.align(Alignment.Center),
-            fontSize = HeatmapCalendarValues.headerFontSize,
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 }

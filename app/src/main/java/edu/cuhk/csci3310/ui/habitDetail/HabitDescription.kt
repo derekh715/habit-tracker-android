@@ -7,21 +7,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import edu.cuhk.csci3310.data.Habit
 
 @Composable
 fun DataTile(figure: String, name: String) {
     Column(verticalArrangement = Arrangement.Center) {
-        Text(text = figure, fontSize = 28.sp, fontWeight = FontWeight.SemiBold)
+        Text(text = figure, style = MaterialTheme.typography.displaySmall)
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = name, fontSize = 14.sp, fontWeight = FontWeight.Light)
+        Text(text = name, fontWeight = FontWeight.Light, style = MaterialTheme.typography.bodySmall)
     }
 }
 
@@ -34,11 +34,13 @@ fun HabitDescription(habit: Habit) {
     ) {
         Text(
             habit.title,
-            fontSize = 48.sp,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
         )
         Spacer(Modifier.height(8.dp))
-        Text(habit.description ?: "No Description Provided", fontSize = 24.sp)
+        Text(
+            habit.description ?: "No Description Provided",
+            style = MaterialTheme.typography.bodyLarge
+        )
         Spacer(Modifier.height(16.dp))
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
             DataTile(figure = "${habit.until}", name = "Effective Until")

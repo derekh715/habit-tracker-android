@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import edu.cuhk.csci3310.data.Group
 
 @Composable
@@ -38,8 +37,12 @@ fun GroupItem(
             .fillMaxWidth()
     ) {
         Column {
-            Text(text = group.name, fontSize = 32.sp, color = Color(group.colour))
-            Text(text = group.description ?: "", fontSize = 24.sp)
+            Text(
+                text = group.name,
+                color = Color(group.colour),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(text = group.description ?: "", style = MaterialTheme.typography.bodyLarge)
         }
         Row {
             IconButton(

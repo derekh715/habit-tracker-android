@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.maxkeppeker.sheets.core.models.base.UseCaseState
 import edu.cuhk.csci3310.data.GroupListOption
 
@@ -25,7 +25,7 @@ fun HabitGroupListing(
 ) {
     val inGroups = groups.filter { it.selected }
     Column(horizontalAlignment = Alignment.Start) {
-        Text("In group(s):", fontSize = 24.sp)
+        Text("In group(s):", style = MaterialTheme.typography.labelMedium)
         Spacer(Modifier.height(8.dp))
         LazyColumn(content = {
             items(inGroups) {

@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import edu.cuhk.csci3310.data.Habit
 import java.time.LocalDate
 
@@ -40,14 +39,14 @@ fun HabitItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1F)) {
-                Text(text = habit.title, fontSize = 32.sp)
+                Text(text = habit.title, style = MaterialTheme.typography.titleMedium)
                 Text(
                     text = if (habit.description.isNullOrEmpty()) {
                         "No Description"
                     } else {
                         habit.description
                     },
-                    fontSize = 18.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontStyle = FontStyle.Italic
                 )
             }

@@ -9,10 +9,10 @@ import Sky400
 import Sky600
 import android.app.Activity
 import android.os.Build
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -41,7 +41,7 @@ private val LightColorScheme = lightColorScheme(
 fun HabitTrackerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
+    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val useDynamicColours = dynamicColor && Build.VERSION.SDK_INT > Build.VERSION_CODES.S
@@ -49,13 +49,11 @@ fun HabitTrackerTheme(
     val context = LocalContext.current
 
     val colorScheme = when {
-        useDynamicColours && darkTheme -> dynamicLightColorScheme(context)
+        useDynamicColours && darkTheme -> dynamicDarkColorScheme(context)
         useDynamicColours && !darkTheme -> dynamicLightColorScheme(context)
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-
-    Log.i("PUB", "$darkTheme | $useDynamicColours")
 
     if (!view.isInEditMode) {
         SideEffect {

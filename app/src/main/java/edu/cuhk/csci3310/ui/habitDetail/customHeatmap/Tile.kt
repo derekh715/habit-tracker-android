@@ -26,7 +26,7 @@ enum class Level(val color: Color) {
 fun Tile(color: Color, onClick: (() -> Unit)? = null) {
     Box(
         modifier = Modifier
-            .size(HeatmapCalendarValues.daySize)
+            .size(28.dp)
             .padding(3.dp)
             .clip(RoundedCornerShape(3.dp))
             .background(color = color)

@@ -3,6 +3,7 @@ package edu.cuhk.csci3310.ui.habitDetail.customHeatmap
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,6 +20,6 @@ fun MonthHeader(
             .fillMaxWidth()
             .padding(bottom = 1.dp, start = 2.dp),
     ) {
-        Text(text = title, fontSize = HeatmapCalendarValues.headerFontSize)
+        Text(text = title, style = MaterialTheme.typography.labelMedium)
     }
 }
