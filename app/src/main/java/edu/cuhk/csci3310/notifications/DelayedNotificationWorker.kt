@@ -1,11 +1,11 @@
 package edu.cuhk.csci3310.notifications
 
 import android.content.Context
+import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.Worker
 import androidx.work.WorkerParameters
-import androidx.work.workDataOf
+import edu.cuhk.csci3310.data.AppDatabase
 import java.time.Duration
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
@@ -13,12 +13,11 @@ import java.util.concurrent.TimeUnit
 class DelayedNotificationWorker(
     private val appContext: Context,
     workerParameters: WorkerParameters
-) : Worker(
+) : CoroutineWorker(
     appContext,
     workerParameters,
 ) {
     companion object {
-        const val NAMES_KEY = "names"
         const val WORK_TAG = "daily_reminder"
 
         fun calculateDelay(time: LocalTime = LocalTime.of(16, 18)): Long {
@@ -31,22 +30,16 @@ class DelayedNotificationWorker(
         }
 
         fun buildWorkerRequest(
-            names: List<String>,
             delay: Long,
         ): OneTimeWorkRequest {
             return OneTimeWorkRequestBuilder<DelayedNotificationWorker>()
                 .setInitialDelay(delay, TimeUnit.SECONDS)
-                .setInputData(
-                    workDataOf(
-                        NAMES_KEY to names.toTypedArray(),
-                    ),
-                )
                 .build()
         }
     }
 
-    override fun doWork(): Result {
-        val names: List<String> = inputData.getStringArray(NAMES_KEY)!!.asList()
+    override suspend fun doWork(): Result {
+        val names = AppDatabase.getAppDatabase(appContext)!!.habitDao.getTitlesOfPendingHabits()
         DailyNotificationService(appContext).showNotification(names)
         return Result.success()
     }

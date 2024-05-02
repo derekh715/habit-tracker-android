@@ -67,7 +67,6 @@ class UserSectionViewModel @Inject constructor(
             setValue(Settings.NOTIFY_AT_HOURS, time.hour)
             setValue(Settings.NOTIFY_AT_MINUTES, time.minute)
             val request = DelayedNotificationWorker.buildWorkerRequest(
-                habitDao.getTitlesOfPendingHabits(),
                 DelayedNotificationWorker.calculateDelay(time)
             )
             WorkManager.getInstance(getApplication<Application>().applicationContext)

@@ -1,8 +1,6 @@
 package edu.cuhk.csci3310.ui.settings
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -23,7 +21,7 @@ fun DebugSection(viewModel: DebugSectionViewModel = hiltViewModel()) {
         }
     }
     val amount = viewModel.amount.collectAsState()
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Debug Section",
             fontWeight = FontWeight.SemiBold,
@@ -32,58 +30,52 @@ fun DebugSection(viewModel: DebugSectionViewModel = hiltViewModel()) {
         MyTextField(info = amount.value, onValueChange = {
             viewModel.valueChanged(it)
         })
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = {
-                viewModel.addHabits()
-            }) {
-                Text("Add dummy habit(s)")
-            }
-            Button(onClick = {
-                viewModel.addGroups()
-            }) {
-                Text("Add dummy group(s)")
-            }
-            Button(onClick = {
-                viewModel.addRecords()
-            }) {
-                Text("Add dummy record(s)")
-            }
+        Button(onClick = {
+            viewModel.addHabits()
+        }) {
+            Text("Add dummy habit(s)")
+        }
+        Button(onClick = {
+            viewModel.addGroups()
+        }) {
+            Text("Add dummy group(s)")
+        }
+        Button(onClick = {
+            viewModel.addRecords()
+        }) {
+            Text("Add dummy record(s)")
         }
         Text(text = "Notifications")
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = {
-                viewModel.showTestNotification()
-            }) {
-                Text("Show Test Notification")
-            }
-            Button(onClick = {
-                viewModel.showDailyNotification()
-            }) {
-                Text("Show Daily Notification")
-            }
-            Button(onClick = {
-                viewModel.scheduleNotification()
-            }) {
-                Text("Schedule Test Notification")
-            }
+        Button(onClick = {
+            viewModel.showTestNotification()
+        }) {
+            Text("Show Test Notification")
+        }
+        Button(onClick = {
+            viewModel.showDailyNotification()
+        }) {
+            Text("Show Daily Notification")
+        }
+        Button(onClick = {
+            viewModel.scheduleNotification()
+        }) {
+            Text("Schedule Test Notification")
         }
         Text(text = "Remove")
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = {
-                viewModel.removeAllHabits()
-            }) {
-                Text("Remove All Habits")
-            }
-            Button(onClick = {
-                viewModel.removeAllGroups()
-            }) {
-                Text("Remove All Groups")
-            }
-            Button(onClick = {
-                viewModel.removeAllRecord()
-            }) {
-                Text("Remove All Records")
-            }
+        Button(onClick = {
+            viewModel.removeAllHabits()
+        }) {
+            Text("Remove All Habits")
+        }
+        Button(onClick = {
+            viewModel.removeAllGroups()
+        }) {
+            Text("Remove All Groups")
+        }
+        Button(onClick = {
+            viewModel.removeAllRecord()
+        }) {
+            Text("Remove All Records")
         }
 
     }

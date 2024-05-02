@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,19 +23,21 @@ import edu.cuhk.csci3310.data.Habit
 @Composable
 fun DataTile(figure: String, name: String) {
     Column(verticalArrangement = Arrangement.Center) {
-        Text(text = figure, style = MaterialTheme.typography.displaySmall)
+        Text(text = figure, style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.width(16.dp))
         Text(text = name, fontWeight = FontWeight.Light, style = MaterialTheme.typography.bodySmall)
     }
 }
 
 @Composable
-fun HabitDescription(habit: Habit) {
-
+fun HabitHeader(habit: Habit, takePicture: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        IconButton(onClick = takePicture) {
+            Icon(Icons.Filled.Share, contentDescription = "Share button")
+        }
         Text(
             habit.title,
             style = MaterialTheme.typography.titleLarge,

@@ -95,7 +95,7 @@ interface HabitDao {
     @Query("SELECT habitId FROM habit")
     suspend fun getAllHabitIds(): List<Long>
 
-    @Query("SELECT title FROM habit WHERE nextTime = :time")
+    @Query("SELECT title FROM habit WHERE nextTime <= :time")
     suspend fun getTitlesOfPendingHabits(time: LocalDate = LocalDate.now()): List<String>
 
     @Query("DELETE FROM habit")

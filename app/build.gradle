@@ -117,4 +117,7 @@ dependencies {
     implementation("com.patrykandpatrick.vico:compose:$vico_version")
     implementation("com.patrykandpatrick.vico:compose-m3:$vico_version")
     implementation("com.patrykandpatrick.vico:core:$vico_version")
+
+    // taking screenshot of a component
+    implementation 'com.github.SmartToolFactory:Compose-Screenshot:1.0.3'
 }

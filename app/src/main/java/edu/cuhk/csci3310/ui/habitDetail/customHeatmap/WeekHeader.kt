@@ -21,7 +21,7 @@ fun WeekHeader(dayOfWeek: DayOfWeek) {
             .padding(horizontal = 8.dp),
     ) {
         Text(
-            text = dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()),
+            text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
             modifier = Modifier.align(Alignment.Center),
             style = MaterialTheme.typography.labelMedium,
         )

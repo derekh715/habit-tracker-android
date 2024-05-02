@@ -184,9 +184,8 @@ constructor(
 
     fun scheduleNotification() {
         viewModelScope.launch {
-            val names = habitDao.getTitlesOfPendingHabits()
             // hardcoded 10 seconds of delay for testing
-            val request = DelayedNotificationWorker.buildWorkerRequest(names, 10)
+            val request = DelayedNotificationWorker.buildWorkerRequest(10)
             WorkManager.getInstance(getApplication<Application>().applicationContext)
                 .enqueueUniqueWork(
                     DelayedNotificationWorker.WORK_TAG,

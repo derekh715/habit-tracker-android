@@ -2,9 +2,10 @@ package edu.cuhk.csci3310.ui.habitDetail
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,16 +25,24 @@ fun HabitGroupListing(
     onSelect: (a: List<Int>, b: List<Int>) -> Unit
 ) {
     val inGroups = groups.filter { it.selected }
-    Column(horizontalAlignment = Alignment.Start) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.Start
+    ) {
         Text("In group(s):", style = MaterialTheme.typography.labelMedium)
         Spacer(Modifier.height(8.dp))
-        LazyColumn(content = {
-            items(inGroups) {
-                Column(modifier = Modifier.padding(bottom = 4.dp)) {
-                    Text(text = it.group.name, color = Color(it.group.colour))
+        LazyRow(
+            content = {
+                items(inGroups) {
+                    Text(
+                        text = it.group.name,
+                        color = Color(it.group.colour),
+                        modifier = Modifier.padding(end = 16.dp)
+                    )
                 }
             }
-        })
+        )
         Spacer(Modifier.height(24.dp))
         GroupListPicker(
             state = state,

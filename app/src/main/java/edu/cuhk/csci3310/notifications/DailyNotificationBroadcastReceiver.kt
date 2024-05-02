@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
-import edu.cuhk.csci3310.data.AppDatabase
 import edu.cuhk.csci3310.di.DataStoreManager
 import kotlinx.coroutines.flow.first
 
@@ -14,12 +13,10 @@ class DailyNotificationBroadcastReceiver : BroadcastReceiver() {
         if (context == null || intent?.action != Intent.ACTION_BOOT_COMPLETED) {
             return@goAsync
         }
-        val names =
-            AppDatabase.getAppDatabase(context)?.habitDao?.getTitlesOfPendingHabits() ?: listOf()
         val dt = DataStoreManager(context)
         val time = dt.notifyAt.first()
         val delay = DelayedNotificationWorker.calculateDelay(time)
-        val request = DelayedNotificationWorker.buildWorkerRequest(names, delay)
+        val request = DelayedNotificationWorker.buildWorkerRequest(delay)
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 DelayedNotificationWorker.WORK_TAG,

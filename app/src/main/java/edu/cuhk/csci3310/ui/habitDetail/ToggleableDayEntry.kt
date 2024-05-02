@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -113,8 +114,12 @@ fun ToggleableDayEntry(
         Slate50
     }
 
-    return Column(modifier = Modifier.padding(end = 64.dp)) {
+    return Column(
+        modifier = Modifier.padding(end = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(
+            modifier = Modifier.padding(bottom = 8.dp),
             text = record.date.format(dayMonthFormatter),
             fontWeight = FontWeight.SemiBold,
             color = colour
@@ -124,7 +129,7 @@ fun ToggleableDayEntry(
             onClick = {},
             interactionSource = interactionSource,
             modifier = Modifier
-                .size(48.dp)
+                .size(24.dp)
                 .border(4.dp, colour, shape = CircleShape)
         ) {
             props.icon?.let { Icon(it, contentDescription = null, tint = colour) }
