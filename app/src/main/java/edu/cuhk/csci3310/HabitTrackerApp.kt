@@ -4,10 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import dagger.hilt.android.HiltAndroidApp
-import edu.cuhk.csci3310.notifications.DailyNotificationBroadcastReceiver
 import edu.cuhk.csci3310.notifications.DailyNotificationService
 
 @HiltAndroidApp

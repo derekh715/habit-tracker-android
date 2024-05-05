@@ -1,7 +1,5 @@
 package edu.cuhk.csci3310
 
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import edu.cuhk.csci3310.notifications.DailyNotificationBroadcastReceiver
 import edu.cuhk.csci3310.ui.nav.BottomNavBar
 import edu.cuhk.csci3310.ui.nav.NavHostScreens
 import edu.cuhk.csci3310.ui.theme.HabitTrackerTheme
@@ -29,14 +26,13 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         BottomNavBar(navController = navController)
                     },
-                ) {
-                        paddingValues ->
+                ) { paddingValues ->
                     Box(
                         modifier =
-                            Modifier
-                                .padding(paddingValues)
-                                .padding(horizontal = 32.dp, vertical = 16.dp)
-                                .fillMaxSize(),
+                        Modifier
+                            .padding(paddingValues)
+                            .padding(horizontal = 32.dp, vertical = 16.dp)
+                            .fillMaxSize(),
                     ) {
                         NavHostScreens(navController = navController)
                     }

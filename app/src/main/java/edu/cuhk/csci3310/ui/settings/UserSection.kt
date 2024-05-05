@@ -1,17 +1,20 @@
 package edu.cuhk.csci3310.ui.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import edu.cuhk.csci3310.di.Settings
 import edu.cuhk.csci3310.ui.formUtils.MyCheckbox
 import edu.cuhk.csci3310.ui.formUtils.MyTimePicker
+import edu.cuhk.csci3310.ui.utils.CommonUiEvent
 
 @Composable
 fun UserSection(
@@ -20,6 +23,17 @@ fun UserSection(
     val postNotificationInfo = viewModel.postNotification.collectAsState()
     val notifyAt = viewModel.notifyAt.collectAsState()
     val showDebugOptions = viewModel.showDebugOptions.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = true, block = {
+        viewModel.uiChannel.collect { event ->
+            when (event) {
+                is CommonUiEvent.ShowToast -> {
+                    Toast.makeText(context, event.content, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    })
 
     Column {
         Text(
@@ -30,18 +44,12 @@ fun UserSection(
         MyCheckbox(
             info = postNotificationInfo.value,
             onSelected = {
-                viewModel.setValue(
-                    Settings.POST_NOTIFICATIONS,
-                    !postNotificationInfo.value.toggled
-                )
+                viewModel.toggleNotification()
             })
         MyCheckbox(
             info = showDebugOptions.value,
             onSelected = {
-                viewModel.setValue(
-                    Settings.SHOW_DEBUG_OPTIONS,
-                    !showDebugOptions.value.toggled
-                )
+                viewModel.showDebugOptions()
             })
         Text(
             text = "Notify at:"
