@@ -20,6 +20,7 @@ object Settings {
     val NOTIFY_AT_HOURS = Pair(intPreferencesKey("notify_at_hours"), 16)
     val NOTIFY_AT_MINUTES = Pair(intPreferencesKey("notify_at_minutes"), 30)
     val SHOW_DEBUG_OPTIONS = Pair(booleanPreferencesKey("show_debug_options"), false)
+    val SHOW_RECORDS_UNTIL = Pair(intPreferencesKey("show_records_until"), 1)
 }
 
 class DataStoreManager(appContext: Context) {
@@ -43,5 +44,6 @@ class DataStoreManager(appContext: Context) {
             LocalTime.of(hours, minutes)
         }
     val showDebugOptions = getFlow(Settings.SHOW_DEBUG_OPTIONS)
+    val showRecordsUntil = getFlow(Settings.SHOW_RECORDS_UNTIL)
 }
 

@@ -1,6 +1,8 @@
 package edu.cuhk.csci3310.ui.settings
 
 import android.app.Application
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingWorkPolicy
@@ -10,11 +12,14 @@ import edu.cuhk.csci3310.di.DataStoreManager
 import edu.cuhk.csci3310.di.KeyDefaultValue
 import edu.cuhk.csci3310.di.Settings
 import edu.cuhk.csci3310.notifications.DelayedNotificationWorker
+import edu.cuhk.csci3310.ui.formUtils.TextInputInfo
 import edu.cuhk.csci3310.ui.formUtils.ToggleableInfo
 import edu.cuhk.csci3310.ui.utils.CommonUiEvent
 import edu.cuhk.csci3310.ui.utils.UiEvent
+import edu.cuhk.csci3310.ui.utils.mutableStateIn
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -40,7 +45,7 @@ class UserSectionViewModel @Inject constructor(
         }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.Eagerly,
+                started = SharingStarted.WhileSubscribed(),
                 initialValue = ToggleableInfo(text = "Enable Notifications", toggled = false)
             )
 
@@ -53,18 +58,36 @@ class UserSectionViewModel @Inject constructor(
         }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.Eagerly,
+                started = SharingStarted.WhileSubscribed(),
                 initialValue = ToggleableInfo(text = "Show Debug Options", toggled = false)
             )
 
     val notifyAt = dataStoreManager.notifyAt.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Eagerly,
+        started = SharingStarted.WhileSubscribed(),
         initialValue = LocalTime.of(
             Settings.NOTIFY_AT_HOURS.second,
             Settings.NOTIFY_AT_MINUTES.second
         )
     )
+
+    private fun showRecordsUntilOptions(value: Int = 1): TextInputInfo {
+        return TextInputInfo(
+            label = "Show records for months:",
+            isNumberInput = true,
+            placeholder = "",
+            value = value.toString(),
+            icon = Icons.Filled.CalendarMonth
+        )
+    }
+
+    private val _showRecordsUntil = dataStoreManager.showRecordsUntil.map {
+        showRecordsUntilOptions(it)
+    }.mutableStateIn(
+        scope = viewModelScope,
+        initialValue = showRecordsUntilOptions()
+    )
+    val showRecordsUntil = _showRecordsUntil.asStateFlow()
 
     private fun schedule(time: LocalTime) {
         val request = DelayedNotificationWorker.buildWorkerRequest(
@@ -76,6 +99,40 @@ class UserSectionViewModel @Inject constructor(
                 ExistingWorkPolicy.REPLACE,
                 request
             )
+    }
+
+    fun changeRecordsUntil(newRecordsUntil: String) {
+        viewModelScope.launch {
+            try {
+                val parsed = newRecordsUntil.toInt()
+                if (parsed <= 0) {
+                    _showRecordsUntil.emit(
+                        _showRecordsUntil.value.copy(
+                            errorMessage = "Value must be a positive integer",
+                            showError = true,
+                            value = newRecordsUntil
+                        )
+                    )
+                    return@launch
+                }
+                _showRecordsUntil.emit(
+                    _showRecordsUntil.value.copy(
+                        errorMessage = "",
+                        showError = false,
+                        value = newRecordsUntil
+                    )
+                )
+                setValue(Settings.SHOW_RECORDS_UNTIL, parsed)
+            } catch (error: NumberFormatException) {
+                _showRecordsUntil.emit(
+                    _showRecordsUntil.value.copy(
+                        errorMessage = "The month count must be an integer.",
+                        showError = true,
+                        value = newRecordsUntil
+                    )
+                )
+            }
+        }
     }
 
 

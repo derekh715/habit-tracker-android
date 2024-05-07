@@ -52,21 +52,6 @@ interface HabitDao {
     )
     fun getGroupsOfHabit(habitId: Long): Flow<List<Group>>
 
-//    @Query(
-//        "SELECT h.*, g.name as groupName FROM habit_group_cross_ref hg " +
-//                "INNER JOIN habit h ON hg.habitId = h.habitId " +
-//                "INNER JOIN `group` g ON hg.groupId = g.groupId" +
-//                " UNION SELECT h.*, 'No Group' as groupName FROM habit h " +
-//                "WHERE h.habitId NOT IN (SELECT habitId FROM habit_group_cross_ref) ",
-//    )
-//    fun getAllHabitsWithGroups(): Flow<
-//            Map<
-//                    @MapColumn(columnName = "groupName")
-//                    String,
-//                    List<Habit>,
-//                    >,
-//            >
-
     @Query(
         """
         SELECT h.*, g.name AS groupName, g.colour AS groupColour FROM habit_group_cross_ref hg 

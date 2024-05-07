@@ -10,6 +10,7 @@ import edu.cuhk.csci3310.data.HabitDao
 import edu.cuhk.csci3310.data.HabitGroupCrossRef
 import edu.cuhk.csci3310.data.Record
 import edu.cuhk.csci3310.data.RecordStatus
+import edu.cuhk.csci3310.di.DataStoreManager
 import edu.cuhk.csci3310.ui.nav.Screen
 import edu.cuhk.csci3310.ui.utils.Calculations
 import edu.cuhk.csci3310.ui.utils.CommonUiEvent
@@ -35,6 +36,7 @@ class HabitDetailViewModel
 constructor(
     private val habitDao: HabitDao,
     private val groupDao: GroupDao,
+    private val dataStoreManager: DataStoreManager,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _uiChannel = Channel<UiEvent>()
@@ -61,15 +63,18 @@ constructor(
         initialValue = null
     )
 
-    private val _records = habitId.flatMapLatest { id ->
-        // don't fetch too much
-        habitDao.getRecordsOfHabit(id, LocalDate.now().minusMonths(1))
-    }.combine(habitId) { raw, habitId ->
+    private val _records = habitId.combine(dataStoreManager.showRecordsUntil) { id, months ->
+        Pair(id, months)
+    }.flatMapLatest { (id, months) ->
+        habitDao.getRecordsOfHabit(id, LocalDate.now().minusMonths(months.toLong())).map {
+            Triple(it, id, months)
+        }
+    }.map { (raw, habitId, months) ->
         val toBeInsertedRecords = mutableListOf<Record>()
         var currentDay = LocalDate.now()
         var currentRecordIndex = 0
         // if that day does not have a record, fill it with NOTFILLED record
-        val lastMonth = currentDay.minusMonths(1)
+        val lastMonth = currentDay.minusMonths(months.toLong())
         while (currentDay >= lastMonth) {
             if (currentRecordIndex < raw.size && currentDay == raw[currentRecordIndex].date) {
                 toBeInsertedRecords.add(raw[currentRecordIndex++])
@@ -87,7 +92,7 @@ constructor(
             }
             currentDay = currentDay.minusDays(1)
         }
-        return@combine toBeInsertedRecords.toList()
+        return@map toBeInsertedRecords.toList()
     }
     val records = _records.stateIn(
         scope = viewModelScope,

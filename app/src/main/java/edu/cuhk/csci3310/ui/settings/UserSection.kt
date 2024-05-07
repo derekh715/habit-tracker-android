@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import edu.cuhk.csci3310.ui.formUtils.MyCheckbox
+import edu.cuhk.csci3310.ui.formUtils.MyTextField
 import edu.cuhk.csci3310.ui.formUtils.MyTimePicker
 import edu.cuhk.csci3310.ui.utils.CommonUiEvent
 
@@ -23,6 +24,7 @@ fun UserSection(
     val postNotificationInfo = viewModel.postNotification.collectAsState()
     val notifyAt = viewModel.notifyAt.collectAsState()
     val showDebugOptions = viewModel.showDebugOptions.collectAsState()
+    val showRecordsUntil = viewModel.showRecordsUntil.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true, block = {
@@ -56,6 +58,14 @@ fun UserSection(
         )
         MyTimePicker(time = notifyAt.value, timeChosen = { time ->
             viewModel.changeNotifyAt(time)
+        })
+        Text(
+            text = "Habit Section",
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+        MyTextField(info = showRecordsUntil.value, onValueChange = { value ->
+            viewModel.changeRecordsUntil(value)
         })
     }
 }
