@@ -105,6 +105,8 @@ class UserSectionViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val parsed = newRecordsUntil.toInt()
+                // we cannot display less than 0 months of records
+                // reject it
                 if (parsed <= 0) {
                     _showRecordsUntil.emit(
                         _showRecordsUntil.value.copy(
@@ -117,6 +119,8 @@ class UserSectionViewModel @Inject constructor(
                 }
                 _showRecordsUntil.emit(
                     _showRecordsUntil.value.copy(
+                        // this time the value is valid, remove
+                        // error message
                         errorMessage = "",
                         showError = false,
                         value = newRecordsUntil
@@ -138,6 +142,7 @@ class UserSectionViewModel @Inject constructor(
 
     fun changeNotifyAt(time: LocalTime) {
         viewModelScope.launch {
+            // do not schedule an notification if the user do not want notifications
             if (!postNotification.value.toggled) {
                 return@launch
             }
@@ -155,6 +160,7 @@ class UserSectionViewModel @Inject constructor(
             isEnabledNextTime
         )
         if (!isEnabledNextTime) {
+            // remove the last scheduled notification if the user disables notification
             viewModelScope.launch {
                 WorkManager.getInstance(getApplication<Application>().applicationContext)
                     .cancelAllWorkByTag(DelayedNotificationWorker.WORK_TAG)
@@ -175,6 +181,7 @@ class UserSectionViewModel @Inject constructor(
     }
 
     fun <T> setValue(key: KeyDefaultValue<T>, value: T) {
+        // a helper for updating data store values
         viewModelScope.launch {
             dataStoreManager.setValue(key, value)
         }

@@ -45,6 +45,7 @@ fun HabitListScreen(
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
+        // allows the user to select list all habits or by group title
         MyDropdown(
             options =
             listOf(

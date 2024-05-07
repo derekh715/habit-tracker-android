@@ -1,6 +1,5 @@
 package edu.cuhk.csci3310.ui.habitDetail
 
-import Slate50
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -29,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import edu.cuhk.csci3310.data.Habit
 import edu.cuhk.csci3310.data.Record
 import edu.cuhk.csci3310.data.RecordStatus
+import edu.cuhk.csci3310.ui.theme.Slate50
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import java.time.format.DateTimeFormatter
@@ -52,6 +52,7 @@ fun ToggleableDayEntry(
     // we want to detect long press and short click at the same time
     val interactionSource = remember { MutableInteractionSource() }
     val viewConfiguration = LocalViewConfiguration.current
+    // properties that will be passed to the button
     val props =
         when (record.status) {
             RecordStatus.NOTFILLED -> RecordStatusProps(
@@ -85,6 +86,8 @@ fun ToggleableDayEntry(
     LaunchedEffect(key1 = interactionSource, key2 = props) {
         var isLongClick = false
 
+        // we have to do this since the button accepts BOTH single tap
+        // and long taps
         interactionSource.interactions.collectLatest { interaction ->
             when (interaction) {
                 is PressInteraction.Press -> {
@@ -100,9 +103,7 @@ fun ToggleableDayEntry(
                             props.nextStatus,
                         )
                     }
-
                 }
-
             }
         }
     }

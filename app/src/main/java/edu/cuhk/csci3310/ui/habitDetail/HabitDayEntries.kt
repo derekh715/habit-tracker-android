@@ -93,6 +93,7 @@ fun HabitDayEntries(
                 }, index = index, habit = habit)
             }
         }
+        // for inputting skipped reason or completed times
         InputDialog(
             state = state,
             selection = InputSelection(

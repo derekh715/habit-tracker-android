@@ -17,6 +17,7 @@ fun findLevel(times: Int?): Level {
         return Level.Zero
     }
 
+    // these numbers are arbitrary, if I had time these can be configured by the user
     return when {
         times < -1 -> Level.Negative
         times == -1 -> Level.Skipped

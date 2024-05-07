@@ -15,6 +15,7 @@ typealias KeyDefaultValue<T> = Pair<Preferences.Key<T>, T>
 
 private val Context.dataStore by preferencesDataStore("settings")
 
+// stores the settings key and default value
 object Settings {
     val POST_NOTIFICATIONS = Pair(booleanPreferencesKey("post_notifications"), false)
     val NOTIFY_AT_HOURS = Pair(intPreferencesKey("notify_at_hours"), 16)

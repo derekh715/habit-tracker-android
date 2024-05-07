@@ -16,7 +16,7 @@ import javax.inject.Inject
 class HabitListViewModel
 @Inject
 constructor(
-    private val habitDao: HabitDao,
+    habitDao: HabitDao,
 ) : ViewModel() {
     private val _uiChannel = Channel<UiEvent>()
     val uiChannel = _uiChannel.receiveAsFlow()

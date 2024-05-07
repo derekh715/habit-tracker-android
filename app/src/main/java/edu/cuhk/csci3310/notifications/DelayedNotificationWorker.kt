@@ -27,9 +27,13 @@ class DelayedNotificationWorker(
         fun calculateDelay(time: LocalTime = LocalTime.of(16, 18)): Long {
             val d = Duration.between(LocalTime.now(), time)
             return if (d.isNegative) {
-                // midnight gives zero seconds
                 Duration.between(
+                    // for example, if the time now is 11:00 and the notification time
+                    // is set to be 10:00, then the user will wait for 23 hours before the next
+                    // notification. 11:00 - 24:00 is 13 hours + 00:00 - 10:00 is 10 hours = 23 hours
                     LocalTime.now(),
+                    // midnight gives zero seconds, so I compared time with
+                    // 23:59 then add one back
                     LocalTime.MIDNIGHT.minusSeconds(1)
                 ).seconds + 1 + Duration.between(
                     LocalTime.MIDNIGHT,
@@ -52,6 +56,7 @@ class DelayedNotificationWorker(
     override suspend fun doWork(): Result {
         val names = AppDatabase.getAppDatabase(appContext)!!.habitDao.getTitlesOfPendingHabits()
         DailyNotificationService(appContext).showNotification(names)
+        // we want the notifications to be recurring, so we schedule it again
         reschedule()
         return Result.success()
     }

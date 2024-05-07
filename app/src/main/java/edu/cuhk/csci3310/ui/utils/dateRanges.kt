@@ -2,6 +2,11 @@ package edu.cuhk.csci3310.ui.utils
 
 import java.time.LocalDate
 
+/*
+Iterate over a date range. Implemented with the Heatmap component
+in mind.
+ */
+
 class DateIterator(
     private val startDate: LocalDate,
     private val endDateInclusive: LocalDate,

@@ -1,12 +1,5 @@
 package edu.cuhk.csci3310.ui.theme
 
-import Amber400
-import Amber600
-import Green400
-import Green600
-import Red500
-import Sky400
-import Sky600
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

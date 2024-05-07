@@ -24,6 +24,8 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         private var instance: AppDatabase? = null
 
+        // notifications cannot have dependency injection
+        // we build the database here instead
         fun getAppDatabase(context: Context): AppDatabase? {
             if (instance == null) {
                 instance = databaseBuilder(

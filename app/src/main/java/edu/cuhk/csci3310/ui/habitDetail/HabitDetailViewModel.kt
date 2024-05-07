@@ -36,8 +36,8 @@ class HabitDetailViewModel
 constructor(
     private val habitDao: HabitDao,
     private val groupDao: GroupDao,
-    private val dataStoreManager: DataStoreManager,
     private val savedStateHandle: SavedStateHandle,
+    dataStoreManager: DataStoreManager,
 ) : ViewModel() {
     private val _uiChannel = Channel<UiEvent>()
     val uiChannel = _uiChannel.receiveAsFlow()
@@ -103,6 +103,7 @@ constructor(
     val dateMap: StateFlow<Map<LocalDate, Int>> = _records.map {
         val map = mutableMapOf<LocalDate, Int>()
         it.forEach { r ->
+            // these special values will be used in the heatmap
             map[r.date] = when (r.status) {
                 RecordStatus.SKIPPED -> -1
                 RecordStatus.UNFULFILLED -> -2
@@ -128,6 +129,7 @@ constructor(
             if (habit.value == null || groups.value == null) {
                 return@launch
             }
+            // newlyAdded stores the new groups that this habit will belong to
             event.newlyAdded.forEach {
                 val option = groups.value!![it]
                 groupDao.addHabitIntoGroup(
@@ -137,6 +139,7 @@ constructor(
                     ),
                 )
             }
+            // newlyAdded stores the groups that this habit no longer belongs to
             event.newlyRemoved.forEach {
                 val option = groups.value!![it]
                 groupDao.removeHabitFromGroup(

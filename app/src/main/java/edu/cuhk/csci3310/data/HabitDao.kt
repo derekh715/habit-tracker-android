@@ -52,6 +52,9 @@ interface HabitDao {
     )
     fun getGroupsOfHabit(habitId: Long): Flow<List<Group>>
 
+    // the first part selects those habits with a group
+    // the second part selects the remaining habits that doesn't have a group
+    // and group them under the heading of "No Group"
     @Query(
         """
         SELECT h.*, g.name AS groupName, g.colour AS groupColour FROM habit_group_cross_ref hg 
@@ -68,10 +71,13 @@ interface HabitDao {
                     >,
             >
 
+    // select all groups and return whether that group belongs to the habit with habitId
     @Query(
-        "SELECT g.*, (SELECT COUNT(*)" +
-                " FROM habit_group_cross_ref hg WHERE g.groupId = hg.groupId AND :habitId = hg.habitId)" +
-                " as selected FROM `group` g",
+        """
+          SELECT g.*, (SELECT COUNT(*)  
+          FROM habit_group_cross_ref hg WHERE g.groupId = hg.groupId AND :habitId = hg.habitId)
+          AS selected FROM `group` g
+        """
     )
     fun getAllGroupsWithIsInGroupOrNot(habitId: Long): Flow<List<GroupListOption>>
 
@@ -80,6 +86,7 @@ interface HabitDao {
     @Query("SELECT habitId FROM habit")
     suspend fun getAllHabitIds(): List<Long>
 
+    // for the notification. The notification should be short, so we only show the title
     @Query("SELECT title FROM habit WHERE nextTime <= :time")
     suspend fun getTitlesOfPendingHabits(time: LocalDate = LocalDate.now()): List<String>
 

@@ -4,6 +4,10 @@ import edu.cuhk.csci3310.data.Frequency
 import edu.cuhk.csci3310.data.FrequencyUnit
 import java.time.LocalDate
 
+/*
+Calculates the next day if the user changes the completion status to completed
+Calculates the prev day if the user resets the completion status to not filled
+ */
 object Calculations {
 
     fun calculateNextDay(base: LocalDate = LocalDate.now(), freq: Frequency): LocalDate {

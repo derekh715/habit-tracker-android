@@ -31,6 +31,8 @@ fun NavHostScreens(navController: NavHostController) {
                 listOf(
                     navArgument(name = "habitId") {
                         type = NavType.LongType
+                        // -1 means that we are adding a group instead of
+                        // changing an existing group
                         defaultValue = -1
                     }
                 )
@@ -43,6 +45,9 @@ fun NavHostScreens(navController: NavHostController) {
                 listOf(
                     navArgument(name = "habitId") {
                         type = NavType.LongType
+                        // -1 means the habitId is invalid
+                        // which should not happen anyway
+                        // but it it really happens the view model will handle it gracefully
                         defaultValue = -1
                     },
                 ),
@@ -63,6 +68,8 @@ fun NavHostScreens(navController: NavHostController) {
                 listOf(
                     navArgument(name = "groupId") {
                         type = NavType.LongType
+                        // -1 means that we are adding a group instead of
+                        // changing an existing group
                         defaultValue = -1
                     }
                 )
@@ -71,6 +78,7 @@ fun NavHostScreens(navController: NavHostController) {
             }
         }
 
+        // settings only has a single page, so we directly use a composable
         composable(
             route = Screen.Settings.route,
         ) {

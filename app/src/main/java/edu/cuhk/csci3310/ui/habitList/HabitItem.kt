@@ -1,6 +1,5 @@
 package edu.cuhk.csci3310.ui.habitList
 
-import Slate200
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import edu.cuhk.csci3310.data.Habit
+import edu.cuhk.csci3310.ui.theme.Slate200
 import java.time.LocalDate
 
 @Composable
